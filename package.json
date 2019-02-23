@@ -11,6 +11,7 @@
     "register-service-worker": "^1.5.2",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1",
+    "vue-scrollto": "^2.13.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -33,7 +34,7 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/recommended",
       "@vue/airbnb"
     ],
     "rules": {},
