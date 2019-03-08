@@ -1,3 +1,5 @@
+@import '@/assets/colors.scss';
+
 * {
   box-sizing: border-box;
 }
@@ -6,4 +8,10 @@ body {
   padding: 0;
   margin: 0;
   font-family: Roboto, Arial, sans-serif;
+  background-color: $brown;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
