@@ -1,5 +1,7 @@
 # socialstats
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/whiteand/telegramstats.svg)](https://greenkeeper.io/)
+
 ## Project setup
 ```
 npm install
