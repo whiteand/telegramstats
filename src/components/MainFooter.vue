@@ -1,6 +1,12 @@
 <template>
-  <div class="footer">
-    <div class="contact-us">
+  <div
+    id="footer-id"
+    class="footer"
+  >
+    <div
+      id="contact-us"
+      class="contact-us"
+    >
       <h4>Contact us</h4>
       <a
         class="contact-item"

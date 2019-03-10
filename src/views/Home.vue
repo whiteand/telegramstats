@@ -1,22 +1,37 @@
 <template>
-  <div class="home">
+  <div
+    id="home"
+    class="home"
+  >
     <header class="header">
-      <Header />
+      <Header
+        :links="[
+          { emit: 'charts', title: 'Графики' }
+        ]"
+        :hidden-links="[
+          { emit: 'contactUs', title: 'Сообщить нам' }
+        ]"
+        @charts="$router.push({ path: '/charts/'})"
+        @contactUs="scrollToContactUs"
+      />
     </header>
     <div class="load-stats-container">
       <LoadStats
+        id="load-stats-id"
         :is-loaded="isLoaded"
         @loaded="saveFileToStore"
       />
     </div>
     <div class="about-site-container">
-      <AboutSite />
+      <AboutSite id="about-site-id" />
     </div>
     <div class="how-to-container">
-      <HowToGetStats />
+      <HowToGetStats id="how-to-get-stats-id" />
     </div>
-    <div class="footer">
-      <MainFooter />
+    <div
+      class="footer"
+    >
+      <MainFooter ref="contactUs" />
     </div>
   </div>
 </template>
@@ -27,6 +42,7 @@ import LoadStats from '@/components/LoadStats.vue';
 import AboutSite from '@/components/AboutSite.vue';
 import HowToGetStats from '@/components/HowToGetStats.vue';
 import MainFooter from '@/components/MainFooter.vue';
+import VueScrollTo from 'vue-scrollto';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -49,6 +65,33 @@ export default {
     }),
     saveFileToStore(content) {
       this.setStats(content);
+    },
+    scrollToContactUs() {
+      VueScrollTo.scrollTo(
+        this.$refs.contactUs,
+        400,
+        {
+          easing: 'ease-in',
+          offset: -60,
+          force: true,
+          cancelable: true,
+          onStart(element) {
+            console.log('start');
+            // scrolling started
+          },
+          onDone(element) {
+            console.log('done');
+            // scrolling is done
+          },
+          onCancel() {
+            console.log('cancel');
+            // scrolling has been interrupted
+          },
+          x: false,
+          y: true,
+        },
+
+      );
     },
   },
 };

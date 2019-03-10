@@ -11,7 +11,7 @@
       :class="['load-another', isLoaded ? 'after' : 'before']"
       @click="loadStats"
     >
-      Load another...
+      Загрузить другую статистику...
     </button>
     <div style="opacity: 0; width: 0;height: 0">
       <input
@@ -26,7 +26,6 @@
 import { obj as v } from 'explained-quartet';
 import { compose, path } from 'ramda';
 
-window.v = v;
 const checkMessage = v({
   date: v.and(
     'string',
@@ -41,6 +40,17 @@ const checkMessage = v({
     v.arrayOf(['string', { type: 'string', text: 'string' }]),
   ],
 });
+
+/**
+ * @typedef {{
+ *  date: string,
+ *  from: string | null,
+ *  fromId: string | null,
+ *  id: string
+ *  mediaType: string | null,
+ *  text: Array<{ type: string, text: string }>
+ * }} Message
+ */
 const TEXT_MESSAGE_TYPE = 'text-message';
 
 const deserializeText = (text) => {
@@ -101,18 +111,30 @@ export default {
   data() {
     return {
       isLoading: false,
+      counter: 0,
+      intervalInd: 0,
     };
   },
   computed: {
     currentStatus() {
       if (this.isLoaded) {
-        return 'DONE';
+        return 'Готово';
       }
+      const dotsCount = (1 + (this.counter % 3));
+      const dots = Array.from({ length: dotsCount }, () => '.').join('');
       if (this.isLoading) {
-        return 'Loading...';
+        return `Загрузка${dots}`;
       }
-      return 'Load stats';
+      return 'Загрузить';
     },
+  },
+  mounted() {
+    this.intervalInd = window.setInterval(() => {
+      this.counter = (this.counter + 1) % 3;
+    }, 500);
+  },
+  destroyed() {
+    window.clearInterval(this.intervalInd);
   },
   methods: {
     loadStats() {

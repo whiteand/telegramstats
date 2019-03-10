@@ -16,21 +16,51 @@
       </h2>
     </router-link>
     <ul class="center header-item">
-      <li class="menu-item">
-        Load stats
-      </li>
-      <li class="menu-item">
-        About site
-      </li>
-      <li class="menu-item">
-        How to get stats
+      <li
+        v-for="link in links"
+        :key="link.title"
+        class="menu-item"
+        @click="$emit(link.emit, link.id)"
+      >
+        {{ link.title }}
       </li>
     </ul>
-    <div class="contact-us header-item">
-      Contact us
+    <div
+      v-for="link in hiddenLinks"
+      :key="link.title"
+      class="hidden-item header-item"
+      @click="$emit(link.emit, link.id)"
+    >
+      {{ link.title }}
     </div>
   </div>
 </template>
+<script>
+import { v } from 'explained-quartet';
+
+export default {
+  props: {
+    links: {
+      type: Array,
+      default: () => [],
+      validator: v.arrayOf({
+        emit: 'string',
+        title: 'string',
+      }),
+    },
+    hiddenLinks: {
+      type: Array,
+      default: () => [
+        { to: '#contact-us', title: 'Контакты' },
+      ],
+      validator: v.arrayOf({
+        emit: 'string',
+        title: 'string',
+      }),
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 @import '@/assets/colors.scss';
@@ -48,6 +78,7 @@
 
   .header-item {
     width: 100%;
+    cursor: pointer;
     margin-bottom: 1rem;
   }
 
@@ -89,7 +120,7 @@
     margin: 0;
   }
 
-  .contact-us {
+  .hidden-item {
     display: none;
   }
 }
@@ -127,7 +158,7 @@
       }
     }
 
-    .contact-us {
+    .hidden-item {
       display: block;
       width: 200px;
       color: $grey;
