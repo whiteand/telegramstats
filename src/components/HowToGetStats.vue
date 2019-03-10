@@ -57,11 +57,10 @@
 
 .content {
   max-width: 600px;
-  padding: 10px;
+  padding: 10px 0;
   color: $red;
 
   & .how-to-item {
-    margin-top: 20px;
     font-size: 1rem;
     padding: 5px 15px;
     background-color: $white;
@@ -94,5 +93,15 @@
 
 .link {
   color: $blue;
+}
+
+@media (min-width: $tiny-screen) {
+  .content {
+    padding: 10px;
+  }
+
+  .content .how-to-item {
+    margin-top: 20px;
+  }
 }
 </style>
