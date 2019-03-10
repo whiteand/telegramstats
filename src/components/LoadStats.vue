@@ -7,6 +7,12 @@
     >
       {{ currentStatus }}
     </button>
+    <button
+      :class="['load-another', isLoaded ? 'after' : 'before']"
+      @click="loadStats"
+    >
+      Load another...
+    </button>
     <div style="opacity: 0; width: 0;height: 0">
       <input
         ref="fileInput"
@@ -20,24 +26,63 @@
 import { obj as v } from 'explained-quartet';
 import { compose, path } from 'ramda';
 
+window.v = v;
+const checkMessage = v({
+  date: v.and(
+    'string',
+    value => !Number.isNaN(new Date(value).valueOf()),
+  ),
+  from: ['string', 'nil'],
+  from_id: ['number', 'string', 'nil'],
+  id: 'number',
+  media_type: ['nil', 'string'],
+  text: [
+    'string',
+    v.arrayOf(['string', { type: 'string', text: 'string' }]),
+  ],
+});
+const TEXT_MESSAGE_TYPE = 'text-message';
+
+const deserializeText = (text) => {
+  if (typeof text === 'string') {
+    return [{
+      type: TEXT_MESSAGE_TYPE,
+      text,
+    }];
+  }
+  return text.map(textElement => (typeof textElement === 'string' ? { type: TEXT_MESSAGE_TYPE, text: textElement } : textElement));
+};
+
+const deserializeMessage = message => ({
+  _message: message,
+  date: message.date,
+  from: message.from || null,
+  fromId: message.from_id ? message.from_id.toString() : null,
+  id: message.id.toString(),
+  mediaType: message.media_type || null,
+  text: deserializeText(message.text),
+});
+
 const checkTelegramData = v({
   chats: {
     list: v.arrayOf({
       id: ['number', 'string'],
-      name: ['string', 'undefined', 'null'],
+      name: ['string', 'nil'],
       type: 'string',
-      messages: v.arrayOf({}),
+      messages: [
+        'nil',
+        v.arrayOf(checkMessage),
+      ],
     }),
   },
 });
 
-const deserializeMessage = message => message;
 
 const deserializeChat = chat => ({
   ...chat,
   id: chat.id.toString(),
   name: chat.name || null,
-  messages: chat.messages.map(deserializeMessage),
+  messages: chat.messages ? chat.messages.map(deserializeMessage) : [],
 });
 
 const deserialize = (data) => {
@@ -92,7 +137,10 @@ export default {
       const reader = new FileReader();
       reader.readAsText(file, 'UTF-8');
       const content = await new Promise((resolve) => {
-        reader.onload = compose(resolve, path(['target', 'result']));
+        reader.onload = compose(
+          resolve,
+          path(['target', 'result']),
+        );
       });
       try {
         const data = JSON.parse(content);
@@ -101,6 +149,7 @@ export default {
           console.log(v.explanation);
           throw new TypeError('Json file is invalid');
         }
+        v();
         this.$emit('loaded', deserialize(data));
         return true;
       } catch (error) {
@@ -115,14 +164,41 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/colors.scss';
+@import "@/assets/colors.scss";
 
 .load-stats {
   height: 100vh;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   background-color: $blue;
   display: flex;
+  transition: all 200ms ease-in-out;
+
+  &.after {
+    background-color: $white;
+  }
+}
+
+.load-another {
+  border: none;
+  background-color: rgba(0,0,0,0);
+  font-size: 20px;
+  color: $grey;
+  display: none;
+  cursor: pointer;
+  transition: all 1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+    color: black;
+  }
+
+  &.after {
+    margin-top: 10px;
+    outline: none;
+    display: block;
+  }
 }
 
 .load-stats_button {
@@ -150,8 +226,7 @@ export default {
 
 .load-stats_button.after {
   color: $red;
+  padding: 0;
   background-color: $white;
-  width: 100%;
-  height: 100%;
 }
 </style>
