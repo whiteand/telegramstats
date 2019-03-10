@@ -227,6 +227,7 @@ export default {
   padding: 15px;
   font-size: 2rem;
   border: none;
+  cursor: pointer;
   transition: all 2000ms ease-in-out, color 0 ease-in;
   outline: none;
 }
