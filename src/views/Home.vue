@@ -5,9 +5,7 @@
   >
     <header class="header">
       <Header
-        :links="[
-          { emit: 'charts', title: 'Графики' }
-        ]"
+        :links="links"
         :hidden-links="[
           { emit: 'contactUs', title: 'Сообщить нам' }
         ]"
@@ -58,6 +56,11 @@ export default {
     ...mapState({
       isLoaded: state => Boolean(state.stats),
     }),
+    links() {
+      return this.isLoaded
+        ? [{ emit: 'charts', title: 'Графики' }]
+        : [];
+    },
   },
   methods: {
     ...mapActions({

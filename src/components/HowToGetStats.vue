@@ -50,20 +50,20 @@
 }
 
 .content {
-  max-width: 500px;
+  max-width: 600px;
   padding: 10px;
   color: $red;
 
   & .how-to-item {
     margin-top: 20px;
     font-size: 1rem;
-    padding: 5px;
+    padding: 5px 15px;
     background-color: $white;
 
 
     strong {
       color: $red;
-      font-size: 20px;
+      font-size: 1.2rem;
       line-height: 25px;
       text-shadow: 0 0 1px black;
     }

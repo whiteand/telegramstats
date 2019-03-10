@@ -205,14 +205,14 @@ export default {
 .load-another {
   border: none;
   background-color: rgba(0,0,0,0);
-  font-size: 20px;
+  font-size: 1rem;
   color: $grey;
   display: none;
   cursor: pointer;
   transition: all 1s ease-in-out;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
     color: black;
   }
 

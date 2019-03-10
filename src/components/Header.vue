@@ -160,6 +160,7 @@ export default {
 
     .hidden-item {
       display: block;
+      margin-left: 5px;
       width: 200px;
       color: $grey;
     }
