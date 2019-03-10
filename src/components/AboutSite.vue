@@ -29,13 +29,15 @@
 
 .about-site .title {
   text-align: center;
+  font-size: 2rem;
   text-transform: uppercase;
   margin-bottom: 30px;
 }
 
 .about-site .paragraph {
-  max-width: 300px;
+  max-width: 500px;
   padding: 0 10px;
   text-align: justify;
+  font-size: 1.5rem;
 }
 </style>
