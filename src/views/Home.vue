@@ -9,27 +9,41 @@
         :hidden-links="[
           { emit: 'contactUs', title: 'Сообщить нам' }
         ]"
+        @aboutSite="scrollTo('#about-site')"
+        @howTo="scrollTo('#how-to')"
         @charts="$router.push({ path: '/charts/'})"
         @contactUs="scrollToContactUs"
       />
     </header>
-    <div class="load-stats-container">
+    <div
+      id="load-stats"
+      class="load-stats-container"
+    >
       <LoadStats
         id="load-stats-id"
         :is-loaded="isLoaded"
         @loaded="saveFileToStore"
       />
     </div>
-    <div class="about-site-container">
-      <AboutSite id="about-site-id" />
-    </div>
-    <div class="how-to-container">
-      <HowToGetStats id="how-to-get-stats-id" />
+    <div
+      id="about-site"
+      class="about-site-container"
+    >
+      <AboutSite />
     </div>
     <div
+      id="how-to"
+      class="how-to-container"
+    >
+      <HowToGetStats @toLoadStats="scrollTo('#load-stats')" />
+    </div>
+    <div
+      id="contact-us"
       class="footer"
     >
-      <MainFooter ref="contactUs" />
+      <MainFooter
+        :is-highlighted="isFooterHighlighted"
+      />
     </div>
   </div>
 </template>
@@ -40,8 +54,10 @@ import LoadStats from '@/components/LoadStats.vue';
 import AboutSite from '@/components/AboutSite.vue';
 import HowToGetStats from '@/components/HowToGetStats.vue';
 import MainFooter from '@/components/MainFooter.vue';
-import VueScrollTo from 'vue-scrollto';
+import { scroller } from 'vue-scrollto/src/scrollTo';
 import { mapState, mapActions } from 'vuex';
+
+const scrollTo = scroller();
 
 export default {
   name: 'Home',
@@ -52,17 +68,28 @@ export default {
     HowToGetStats,
     MainFooter,
   },
+  data() {
+    return {
+      isFooterHighlighted: false,
+    };
+  },
   computed: {
     ...mapState({
       isLoaded: state => Boolean(state.stats),
     }),
     links() {
-      return this.isLoaded
-        ? [{ emit: 'charts', title: 'Графики' }]
-        : [];
+      const res = [
+        { emit: 'aboutSite', title: 'Про сайт' },
+        { emit: 'howTo', title: 'HOW TO?' },
+      ];
+      if (this.isLoaded) {
+        res.unshift({ emit: 'charts', title: 'Графики' });
+      }
+      return res;
     },
   },
   methods: {
+    scrollTo,
     ...mapActions({
       setStats: 'setStats',
     }),
@@ -70,31 +97,11 @@ export default {
       this.setStats(content);
     },
     scrollToContactUs() {
-      VueScrollTo.scrollTo(
-        this.$refs.contactUs,
-        400,
-        {
-          easing: 'ease-in',
-          offset: -60,
-          force: true,
-          cancelable: true,
-          onStart(element) {
-            console.log('start');
-            // scrolling started
-          },
-          onDone(element) {
-            console.log('done');
-            // scrolling is done
-          },
-          onCancel() {
-            console.log('cancel');
-            // scrolling has been interrupted
-          },
-          x: false,
-          y: true,
-        },
-
-      );
+      scrollTo('#contact-us');
+      this.isFooterHighlighted = true;
+      window.setTimeout(() => {
+        this.isFooterHighlighted = false;
+      }, 1000);
     },
   },
 };

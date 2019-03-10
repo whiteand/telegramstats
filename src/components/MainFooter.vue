@@ -1,7 +1,7 @@
 <template>
   <div
     id="footer-id"
-    class="footer"
+    :class="['footer', isHighlighted ? 'highlighted' : 'not-highlighted']"
   >
     <div
       id="contact-us"
@@ -31,6 +31,12 @@ export default {
   components: {
     Telegram,
   },
+  props: {
+    isHighlighted: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
 
@@ -43,6 +49,14 @@ export default {
   background-color: $white;
   padding-top: 20px;
   color: $grey;
+  transition: all 500ms ease-in-out;
+
+  &.highlighted {
+    filter: brightness(2);
+    border-top: 5px solid black;
+    color: $red;
+    text-shadow: 0 0 5px black;
+  }
 }
 
 .contact-us {

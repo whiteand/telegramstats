@@ -6,31 +6,37 @@
       </h3>
       <div>
         <div class="how-to-item">
-          Откройте <a
+          1. Откройте <a
             href="https://desktop.telegram.org/"
             class="link"
           >версию</a> Telegram для Windows
         </div>
         <div class="how-to-item">
-          В левом верхнем углу нажмите на <strong>кнопку меню</strong>(в виде бургера)
+          2. В левом верхнем углу нажмите на <strong>кнопку меню</strong>(в виде бургера)
         </div>
         <div class="how-to-item">
-          Выберите пункт меню <strong>"Настройки"</strong>
+          3. Выберите пункт меню <strong>"Настройки"</strong>
         </div>
         <div class="how-to-item">
-          Выберите пункт меню <strong>"Продвинутые настройки"</strong>
+          4. Выберите пункт меню <strong>"Продвинутые настройки"</strong>
         </div>
         <div class="how-to-item">
-          Выберите пункт <strong>"Экспорт данных из Telegram"</strong>
+          5. Выберите пункт <strong>"Экспорт данных из Telegram"</strong>
         </div>
         <div class="how-to-item">
-          В пункте "Настройки экспорта для сообщений" поставьте галочку напротив пункта <strong>"Личные чаты"</strong>
+          6. В пункте "Настройки экспорта для сообщений" поставьте галочку напротив пункта <strong>"Личные чаты"</strong>
         </div>
         <div class="how-to-item">
-          В пункте "Путь для сохранения и формат" выберите пункт <strong>"JSON для чтения компьютером"</strong>
+          7. В пункте "Путь для сохранения и формат" выберите пункт <strong>"JSON для чтения компьютером"</strong>
         </div>
         <div class="how-to-item">
-          Нажмите на кнопку <strong>"ЭКСПОРТИРОВАТЬ"</strong>
+          8. Нажмите на кнопку <strong>"ЭКСПОРТИРОВАТЬ"</strong>
+        </div>
+        <div
+          class="how-to-item last"
+          @click="$emit('toLoadStats')"
+        >
+          9. Загрузите данные нажав на кнопку <strong>Загрузить</strong>
         </div>
       </div>
     </div>
@@ -46,7 +52,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .content {
@@ -60,6 +66,15 @@
     padding: 5px 15px;
     background-color: $white;
 
+    &.last {
+      background-color: $blue;
+      color: $white;
+      cursor: pointer;
+
+      strong {
+        color: inherit;
+      }
+    }
 
     strong {
       color: $red;

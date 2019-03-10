@@ -18,7 +18,7 @@
 @import "@/assets/colors.scss";
 
 .about-site {
-  height: 100vh;
+  min-height: 100vh;
   background-color: $grey;
   display: flex;
   flex-direction: column;
