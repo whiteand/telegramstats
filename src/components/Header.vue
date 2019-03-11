@@ -6,7 +6,7 @@
     >
       <div class="logo">
         <img
-          src="img/colored_logo2.png"
+          src="/img/colored_logo2.png"
           alt="logo"
         >
       </div>
@@ -67,8 +67,8 @@ export default {
 @import '@/assets/variables.scss';
 
 .header {
-  background-color: $accent;
-  color: $main;
+  background-color: $main;
+  color: $complement;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -85,11 +85,11 @@ export default {
   .left {
     display: flex;
     align-items: center;
-    background-color: $complement;
+    background-color: $accent;
     transition: background-color 0.4s ease-in-out;
 
     .logo {
-      background-color: $complement;
+      background-color: $accent;
       padding: 10px;
       border-bottom-right-radius:
       15px;
@@ -103,10 +103,10 @@ export default {
     .caption {
       letter-spacing: 1px;
       margin-left: 10px;
-      color: $accent;
+      color: $main;
       transition: color 0.4s ease-in-out;
       font-weight: 100;
-      text-shadow: 0 0 2px $main;
+      text-shadow: 0 0 2px $complement;
     }
   }
 
@@ -141,11 +141,11 @@ export default {
       background-color: inherit;
 
       .logo {
-        box-shadow: 0 0 15px $main inset;
+        box-shadow: 0 0 15px $complement inset;
       }
 
       .caption {
-        color: $main;
+        color: $complement;
       }
     }
 
@@ -162,7 +162,7 @@ export default {
       display: block;
       margin-left: 5px;
       width: 200px;
-      color: $complement;
+      color: $accent;
     }
   }
 }

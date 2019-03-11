@@ -119,7 +119,7 @@ export default {
         return 'Готово';
       }
       if (this.isLoading) {
-        return `Загрузка...`;
+        return 'Загрузка...';
       }
       return 'Загрузить';
     },
@@ -156,7 +156,6 @@ export default {
         const data = JSON.parse(content);
         v();
         if (!checkTelegramData(data)) {
-          console.log(v.explanation);
           throw new TypeError('Json file is invalid');
         }
         v();
@@ -165,7 +164,6 @@ export default {
       } catch (error) {
         // eslint-disable-next-line
         alert(`${file.name} is invalid json file`);
-        console.error(error);
       }
       return false;
     },
@@ -181,12 +179,12 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: $complement;
+  background-color: $accent;
   display: flex;
   transition: all 200ms ease-in-out;
 
   &.after {
-    background-color: $accent;
+    background-color: $main;
   }
 }
 
@@ -194,7 +192,7 @@ export default {
   border: none;
   background-color: rgba(0,0,0,0);
   font-size: 1rem;
-  color: $complement;
+  color: $accent;
   display: none;
   cursor: pointer;
   transition: all 1s ease-in-out;
@@ -221,23 +219,23 @@ export default {
 }
 
 .load-stats_button.before {
-  background-color: $main;
-  color: $accent;
+  background-color: $complement;
+  color: $main;
 
   &:hover {
-    background-color: $accent;
-    color: $main;
-    box-shadow: 0 0 15px $accent;
+    background-color: $main;
+    color: $complement;
+    box-shadow: 0 0 15px $main;
   }
 
   &:active {
-    box-shadow: 0 0 150px $accent;
+    box-shadow: 0 0 150px $main;
   }
 }
 
 .load-stats_button.after {
-  color: $main;
+  color: $complement;
   padding: 0;
-  background-color: $accent;
+  background-color: $main;
 }
 </style>

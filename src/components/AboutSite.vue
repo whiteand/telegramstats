@@ -5,10 +5,12 @@
         Про сайт
       </h3>
       <p class="paragraph">
-        Данный сайт создан для просмотра графиков и диаграм построенных на основании данных о сообщениях в мессенджере Telegram.
+        Данный сайт создан для просмотра графиков и диаграм построенных
+        на основании данных о сообщениях в мессенджере Telegram.
       </p>
       <p class="paragraph">
-        Цель этого сайта: удовлетворение любопытства для тех, кто любит статистику и заинтересован в статистических деликатесах.
+        Цель этого сайта: удовлетворение любопытства для тех, кто любит
+        статистику и заинтересован в статистических деликатесах.
       </p>
     </div>
   </div>
@@ -19,12 +21,12 @@
 
 .about-site {
   min-height: 100vh;
-  background-color: $main;
+  background-color: $complement;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  color: $accent;
+  color: $main;
 }
 
 .about-site .title {
