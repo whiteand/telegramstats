@@ -19,12 +19,12 @@
 
 .about-site {
   min-height: 100vh;
-  background-color: $grey;
+  background-color: $main;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  color: $white;
+  color: $accent;
 }
 
 .about-site .title {

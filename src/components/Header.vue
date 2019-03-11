@@ -67,8 +67,8 @@ export default {
 @import '@/assets/variables.scss';
 
 .header {
-  background-color: $white;
-  color: $red;
+  background-color: $accent;
+  color: $main;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -85,11 +85,11 @@ export default {
   .left {
     display: flex;
     align-items: center;
-    background-color: $grey;
+    background-color: $complement;
     transition: background-color 0.4s ease-in-out;
 
     .logo {
-      background-color: $grey;
+      background-color: $complement;
       padding: 10px;
       border-bottom-right-radius:
       15px;
@@ -103,10 +103,10 @@ export default {
     .caption {
       letter-spacing: 1px;
       margin-left: 10px;
-      color: $white;
+      color: $accent;
       transition: color 0.4s ease-in-out;
       font-weight: 100;
-      text-shadow: 0 0 2px $brown;
+      text-shadow: 0 0 2px $main;
     }
   }
 
@@ -141,11 +141,11 @@ export default {
       background-color: inherit;
 
       .logo {
-        box-shadow: 0 0 15px $brown inset;
+        box-shadow: 0 0 15px $main inset;
       }
 
       .caption {
-        color: $red;
+        color: $main;
       }
     }
 
@@ -162,7 +162,7 @@ export default {
       display: block;
       margin-left: 5px;
       width: 200px;
-      color: $grey;
+      color: $complement;
     }
   }
 }

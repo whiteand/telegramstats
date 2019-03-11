@@ -97,20 +97,25 @@ export default {
       this.setStats(content);
     },
     scrollToContactUs() {
-      scrollTo('#contact-us');
-      this.isFooterHighlighted = true;
-      window.setTimeout(() => {
-        this.isFooterHighlighted = false;
-      }, 1000);
+      scrollTo('#contact-us', {
+        onDone: () => {
+          this.isFooterHighlighted = true;
+          window.setTimeout(() => {
+            this.isFooterHighlighted = false;
+          }, 1000);
+        },
+      });
     },
   },
 };
 </script>
 <style lang="scss" scoped>
 @import '@/assets/variables.scss';
+@import '@/assets/colors.scss';
 
 .home {
   width: 100%;
+  box-shadow: 0 0 20px black;
 }
 
 @media (min-width: $middle-screen) {

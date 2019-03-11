@@ -46,15 +46,15 @@ export default {
 @import '@/assets/colors.scss';
 
 .footer {
-  background-color: $white;
+  background-color: $accent;
   padding-top: 20px;
-  color: $grey;
+  color: $complement;
   transition: all 500ms ease-in-out;
 
   &.highlighted {
-    filter: brightness(2);
-    border-top: 5px solid black;
-    color: $red;
+    filter: brightness(1.15);
+    transform: scale(1.15);
+    color: $main;
     text-shadow: 0 0 5px black;
   }
 }
@@ -65,16 +65,16 @@ export default {
 }
 
 .copyright {
-  background-color: $grey;
-  color: $white;
+  background-color: $complement;
+  color: $accent;
   padding: 10px 0;
   text-align: center;
   transition: all 0.2s ease-in;
   cursor: pointer;
 
   &:hover {
-    color: $red;
-    text-shadow: 0 0 4px $white;
+    color: $main;
+    text-shadow: 0 0 4px $accent;
   }
 }
 

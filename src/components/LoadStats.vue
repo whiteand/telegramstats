@@ -193,12 +193,12 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: $blue;
+  background-color: $complement;
   display: flex;
   transition: all 200ms ease-in-out;
 
   &.after {
-    background-color: $white;
+    background-color: $accent;
   }
 }
 
@@ -206,7 +206,7 @@ export default {
   border: none;
   background-color: rgba(0,0,0,0);
   font-size: 1rem;
-  color: $grey;
+  color: $complement;
   display: none;
   cursor: pointer;
   transition: all 1s ease-in-out;
@@ -233,23 +233,23 @@ export default {
 }
 
 .load-stats_button.before {
-  background-color: $red;
-  color: $white;
+  background-color: $main;
+  color: $accent;
 
   &:hover {
-    background-color: $white;
-    color: $red;
-    box-shadow: 0 0 15px $white;
+    background-color: $accent;
+    color: $main;
+    box-shadow: 0 0 15px $accent;
   }
 
   &:active {
-    box-shadow: 0 0 150px $white;
+    box-shadow: 0 0 150px $accent;
   }
 }
 
 .load-stats_button.after {
-  color: $red;
+  color: $main;
   padding: 0;
-  background-color: $white;
+  background-color: $accent;
 }
 </style>

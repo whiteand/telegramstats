@@ -48,7 +48,7 @@
 @import '@/assets/variables.scss';
 
 .how-to {
-  background-color: $red;
+  background-color: $complement;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -58,16 +58,16 @@
 .content {
   max-width: 600px;
   padding: 10px 0;
-  color: $red;
+  color: $main;
 
   & .how-to-item {
     font-size: 1rem;
     padding: 5px 15px;
-    background-color: $white;
+    background-color: $accent;
 
     &.last {
-      background-color: $blue;
-      color: $white;
+      background-color: $main;
+      color: $accent;
       cursor: pointer;
 
       strong {
@@ -76,7 +76,7 @@
     }
 
     strong {
-      color: $red;
+      color: $main;
       font-size: 1.2rem;
       line-height: 25px;
       text-shadow: 0 0 1px black;
@@ -85,14 +85,14 @@
 }
 
 .title {
-  color: $white;
+  color: $accent;
   text-align: center;
   font-size: 2rem;
   margin-bottom: 30px;
 }
 
 .link {
-  color: $blue;
+  color: $complement;
 }
 
 @media (min-width: $tiny-screen) {
