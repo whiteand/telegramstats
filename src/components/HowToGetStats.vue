@@ -27,23 +27,27 @@
             Telegram"</strong>
         </div>
         <div class="how-to-item">
-          6. В пункте "Настройки экспорта для сообщений"
+          6. В поставьте галочку напротив пункта
+          <strong>"Информация об аккаунте"</strong>
+        </div>
+        <div class="how-to-item">
+          7. В пункте "Настройки экспорта для сообщений"
           поставьте галочку напротив пункта
           <strong>"Личные чаты"</strong>
         </div>
         <div class="how-to-item">
-          7. В пункте "Путь для сохранения и формат"
+          8. В пункте "Путь для сохранения и формат"
           выберите пункт <strong>"JSON для
             чтения компьютером"</strong>
         </div>
         <div class="how-to-item">
-          8. Нажмите на кнопку <strong>"ЭКСПОРТИРОВАТЬ"</strong>
+          9. Нажмите на кнопку <strong>"ЭКСПОРТИРОВАТЬ"</strong>
         </div>
         <div
           class="how-to-item last"
           @click="$emit('toLoadStats')"
         >
-          9. Загрузите данные нажав
+          10. Загрузите данные нажав
           на кнопку <strong>Загрузить</strong>
         </div>
       </div>
@@ -61,21 +65,22 @@
   justify-content: space-around;
   align-items: center;
   min-height: 100vh;
+  padding: 10px 0;
 }
 
 .content {
   max-width: 600px;
   padding: 10px 0;
-  color: $complement;
+  color: $main;
 
   & .how-to-item {
     font-size: 1rem;
     padding: 5px 15px;
-    background-color: $main;
+    background-color: $complement;
 
     &.last {
-      background-color: $complement;
-      color: $main;
+      background-color: $main;
+      color: $complement;
       cursor: pointer;
 
       strong {
@@ -84,7 +89,7 @@
     }
 
     strong {
-      color: $complement;
+      color: $main;
       font-size: 1.2rem;
       line-height: 25px;
       text-shadow: 0 0 1px black;
@@ -93,7 +98,7 @@
 }
 
 .title {
-  color: $main;
+  color: $complement;
   text-align: center;
   font-size: 2rem;
   margin-bottom: 30px;

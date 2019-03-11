@@ -24,9 +24,10 @@ export default new Vuex.Store({
   },
   getters: {
     isLoaded: state => Boolean(state.stats),
-    chatsInfo: state => (state.stats
-      ? state.stats.chats.map(chat => ({ name: chat.name, id: chat.id }))
+    chats: state => (state.stats
+      ? state.stats.chats
       : []),
+    myId: state => (state.stats ? state.stats.personalInformation.userId : null),
   },
   /* eslint-disable no-param-reassign */
   mutations: {

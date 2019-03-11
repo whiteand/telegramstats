@@ -13,11 +13,22 @@
       />
     </header>
     <div class="content">
-      <ChooseOne :items="['andrew', 'white', 'is', 'the', 'best', 'developer', 'in', 'the', 'world']">
-        <div class="chat-item" slot-scope="{item, select}">
-          {{item}}
+      <ChooseOne
+        v-model="selectedChatId"
+        :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
+      />
+      <div class="infoblock">
+        <div class="infoblock-content">
+          <h3>Last messages</h3>
+          <div
+            v-for="m in lastMessages"
+            :key="m.id"
+            :class="['message', m.isMy ? 'my' : 'not-my']"
+          >
+            {{ m.text }}
+          </div>
         </div>
-      </ChooseOne>
+      </div>
     </div>
     <div
       id="contact-us"
@@ -40,7 +51,7 @@ import { mapGetters, mapActions } from 'vuex';
 const scrollTo = scroller();
 
 export default {
-  name: 'Home',
+  name: 'Charts',
   components: {
     Header,
     ChooseOne,
@@ -49,18 +60,43 @@ export default {
   data() {
     return {
       isFooterHighlighted: false,
+      selectedChatId: null,
     };
   },
   computed: {
     ...mapGetters({
       chats: 'chats',
       isLoaded: 'isLoaded',
+      myId: 'myId',
     }),
+    chatsInfo() {
+      return this.chats.map(chat => ({ name: chat.name || 'Unknown', id: chat.id }));
+    },
+    lastMessages() {
+      const selectedChat = this.chats.find(chat => chat.id === this.selectedChatId);
+      const transformMessages = (message) => {
+        const { text } = message;
+        const textPart = text.find(({ type }) => type === 'text-message');
+        return {
+          text: textPart ? textPart.text : '',
+          id: message.id,
+          fromId: message.fromId,
+          isMy: message.fromId === this.myId,
+        };
+      };
+
+      return selectedChat
+        ? selectedChat.messages.slice(-20).map(transformMessages).filter(m => m.text !== '')
+        : [];
+    },
   },
   created() {
     if (!this.isLoaded) {
       this.$router.push({ path: '/' });
+      return;
     }
+    this.selectedChatId = this.chatsInfo[0].id;
+    console.log(this.myId, this.lastMessages);
   },
   methods: {
     scrollTo,
@@ -86,8 +122,22 @@ export default {
 @import '@/assets/colors.scss';
 
 .content {
-  color: $main;
-  background: $complement;
+  color: $complement;
+  background: $main;
+}
+
+.infoblock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px 0;
+
+  h3 {
+    text-transform: uppercase;
+    text-align: center;
+  }
 }
 
 .charts {
@@ -95,10 +145,40 @@ export default {
   box-shadow: 0 0 20px black;
 }
 
+.message {
+  color: $main;
+  background-color: $complement;
+  border-radius: 10px;
+  padding: 5px 10px;
+  &:not(:last-child) {
+    margin-bottom: 15px;
+  }
+
+  &.my {
+    color: $complement;
+    border: 1px solid $complement;
+    box-shadow: 0 0 5px $complement;
+    background-color: $main;
+    text-align: right;
+  }
+}
+
+@media (min-width: $tiny-screen) {
+  .infoblock {
+    &-content {
+      max-width: 80%;
+    }
+  }
+}
+
 @media (min-width: $middle-screen) {
   .charts {
     max-width: $middle-screen;
     margin: 0 auto;
+  }
+
+  .infoblock {
+    padding: 30px;
   }
 }
 </style>

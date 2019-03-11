@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "explained-quartet": "0.0.4",
+    "explained-quartet": "0.0.5",
     "ramda": "^0.26.1",
     "register-service-worker": "^1.5.2",
     "vue": "^2.6.6",

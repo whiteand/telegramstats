@@ -46,7 +46,7 @@ export default {
 @import '@/assets/colors.scss';
 
 .footer {
-  background-color: $main;
+  background-color: $complement;
   padding-top: 20px;
   color: $accent;
   transition: all 500ms ease-in-out;
@@ -54,7 +54,7 @@ export default {
   &.highlighted {
     filter: brightness(1.15);
     transform: scale(1.15);
-    color: $complement;
+    color: $main;
     text-shadow: 0 0 5px black;
   }
 }
@@ -66,15 +66,15 @@ export default {
 
 .copyright {
   background-color: $accent;
-  color: $main;
+  color: $complement;
   padding: 10px 0;
   text-align: center;
   transition: all 0.2s ease-in;
   cursor: pointer;
 
   &:hover {
-    color: $complement;
-    text-shadow: 0 0 4px $main;
+    color: $main;
+    text-shadow: 0 0 4px $complement;
   }
 }
 

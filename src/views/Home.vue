@@ -22,7 +22,7 @@
       <LoadStats
         id="load-stats-id"
         :is-loaded="isLoaded"
-        @loaded="saveFileToStore"
+        @loaded="setStats"
       />
     </div>
     <div
@@ -93,9 +93,6 @@ export default {
     ...mapActions({
       setStats: 'setStats',
     }),
-    saveFileToStore(content) {
-      this.setStats(content);
-    },
     scrollToContactUs() {
       scrollTo('#contact-us', {
         onDone: () => {

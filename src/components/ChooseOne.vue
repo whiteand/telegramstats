@@ -1,38 +1,50 @@
 <template>
-  <div>
-    <slot
+  <div class="choose-one-wrapper">
+    <div
       v-for="item in itemsToShow"
-      :item="item"
-      :select="select"
-    />
+      :key="item.value"
+      :class="[
+        'choose-one-item',
+        item.value === value ? 'chosen' : 'not-chosen'
+      ]"
+      @click="$emit('input', item.value)"
+    >
+      {{ item.caption }}
+    </div>
   </div>
 </template>
 
 <script>
+import { v } from 'explained-quartet';
+
 export default {
   props: {
     items: {
       type: Array,
       default: () => [],
+      validator: v.arrayOf({
+        value: 'string',
+        caption: 'string',
+      }),
     },
     value: {
-      type: Object,
-      default: null,
+      type: [String, Number],
+      default: 0,
     },
     size: {
       type: Number,
-      default: 5,
+      default: 3,
     },
   },
   computed: {
     itemsToShow() {
-      const index = this.items.indexOf(this.value);
+      const index = this.items.findIndex(item => item.value === this.value);
       if (index < 0) {
-        return this.items.slice(0, this.size);
+        return this.items.slice(0, 2 * this.size);
       }
-      const left = Math.max(0, this.index - Math.floor(this.size / 2));
-      const right = this.index + this.size;
-      return this.slice(left, right);
+      const start = Math.max(0, index - this.size);
+      const end = start + this.size * 2;
+      return this.items.slice(start, end);
     },
   },
   methods: {
@@ -40,6 +52,26 @@ export default {
       this.$emit('input', item);
     },
   },
-
 };
 </script>
+
+<style lang="scss" scoped>
+@import '@/assets/colors.scss';
+@import '@/assets/variables.scss';
+
+.choose-one-wrapper {
+  display: flex;
+  justify-content: space-around;
+  background-color: $main;
+}
+
+.choose-one-item {
+  color: $complement;
+  cursor: pointer;
+
+  &.chosen {
+    color: $accent;
+    text-shadow: 0 0 1px $main;
+  }
+}
+</style>

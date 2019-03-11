@@ -67,8 +67,8 @@ export default {
 @import '@/assets/variables.scss';
 
 .header {
-  background-color: $main;
-  color: $complement;
+  background-color: $complement;
+  color: $main;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,10 +103,10 @@ export default {
     .caption {
       letter-spacing: 1px;
       margin-left: 10px;
-      color: $main;
+      color: $complement;
       transition: color 0.4s ease-in-out;
       font-weight: 100;
-      text-shadow: 0 0 2px $complement;
+      text-shadow: 0 0 2px $main;
     }
   }
 
@@ -141,11 +141,11 @@ export default {
       background-color: inherit;
 
       .logo {
-        box-shadow: 0 0 15px $complement inset;
+        box-shadow: 0 0 15px $main inset;
       }
 
       .caption {
-        color: $complement;
+        color: $main;
       }
     }
 

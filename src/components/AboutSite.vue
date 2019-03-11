@@ -21,12 +21,12 @@
 
 .about-site {
   min-height: 100vh;
-  background-color: $complement;
+  background-color: $main;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  color: $main;
+  color: $complement;
 }
 
 .about-site .title {

@@ -85,8 +85,22 @@ const checkTelegramData = v({
       ],
     }),
   },
+  personal_information: {
+    user_id: ['string', 'number'],
+    first_name: 'string',
+    last_name: 'string',
+    phone_number: 'string',
+    username: 'string',
+  },
 });
 
+const deserializePersonalInformation = info => ({
+  userId: info.user_id.toString(),
+  firstName: info.first_name,
+  lastName: info.last_name,
+  phoneNumber: info.phone_number,
+  username: info.username,
+});
 
 const deserializeChat = chat => ({
   ...chat,
@@ -96,11 +110,13 @@ const deserializeChat = chat => ({
 });
 
 const deserialize = (data) => {
-  const { chats } = data;
+  const { chats, personal_information: personalInformation } = data;
   const { list } = chats;
   const newList = list.map(deserializeChat);
-  return { chats: newList };
+  const newPersonalInformation = deserializePersonalInformation(personalInformation);
+  return { chats: newList, personalInformation: newPersonalInformation };
 };
+
 export default {
   props: {
     isLoaded: {
@@ -184,7 +200,7 @@ export default {
   transition: all 200ms ease-in-out;
 
   &.after {
-    background-color: $main;
+    background-color: $complement;
   }
 }
 
@@ -219,23 +235,23 @@ export default {
 }
 
 .load-stats_button.before {
-  background-color: $complement;
-  color: $main;
+  background-color: $main;
+  color: $complement;
 
   &:hover {
-    background-color: $main;
-    color: $complement;
-    box-shadow: 0 0 15px $main;
+    background-color: $complement;
+    color: $main;
+    box-shadow: 0 0 15px $complement;
   }
 
   &:active {
-    box-shadow: 0 0 150px $main;
+    box-shadow: 0 0 150px $complement;
   }
 }
 
 .load-stats_button.after {
-  color: $complement;
+  color: $main;
   padding: 0;
-  background-color: $main;
+  background-color: $complement;
 }
 </style>
