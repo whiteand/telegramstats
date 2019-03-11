@@ -111,8 +111,6 @@ export default {
   data() {
     return {
       isLoading: false,
-      counter: 0,
-      intervalInd: 0,
     };
   },
   computed: {
@@ -120,21 +118,11 @@ export default {
       if (this.isLoaded) {
         return 'Готово';
       }
-      const dotsCount = (1 + (this.counter % 3));
-      const dots = Array.from({ length: dotsCount }, () => '.').join('');
       if (this.isLoading) {
-        return `Загрузка${dots}`;
+        return `Загрузка...`;
       }
       return 'Загрузить';
     },
-  },
-  mounted() {
-    this.intervalInd = window.setInterval(() => {
-      this.counter = (this.counter + 1) % 3;
-    }, 500);
-  },
-  destroyed() {
-    window.clearInterval(this.intervalInd);
   },
   methods: {
     loadStats() {

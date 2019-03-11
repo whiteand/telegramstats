@@ -37,7 +37,6 @@
 .about-site .paragraph {
   max-width: 500px;
   padding: 0 10px;
-  text-align: justify;
   font-size: 1.5rem;
 }
 </style>
