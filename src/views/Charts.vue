@@ -19,14 +19,10 @@
       />
       <div class="infoblock">
         <div class="infoblock-content">
-          <h3>Last messages</h3>
-          <div
-            v-for="m in lastMessages"
-            :key="m.id"
-            :class="['message', m.isMy ? 'my' : 'not-my']"
-          >
-            {{ m.text }}
-          </div>
+          <LastMessages
+            :stats="stats"
+            :chat-id="selectedChatId"
+          />
         </div>
       </div>
     </div>
@@ -45,8 +41,9 @@
 import Header from '@/components/Header.vue';
 import MainFooter from '@/components/MainFooter.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
+import LastMessages from '@/components/LastMessages.vue';
 import { scroller } from 'vue-scrollto/src/scrollTo';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapState, mapActions } from 'vuex';
 
 const scrollTo = scroller();
 
@@ -56,6 +53,7 @@ export default {
     Header,
     ChooseOne,
     MainFooter,
+    LastMessages,
   },
   data() {
     return {
@@ -67,27 +65,12 @@ export default {
     ...mapGetters({
       chats: 'chats',
       isLoaded: 'isLoaded',
-      myId: 'myId',
+    }),
+    ...mapState({
+      stats: state => state.stats,
     }),
     chatsInfo() {
       return this.chats.map(chat => ({ name: chat.name || 'Unknown', id: chat.id }));
-    },
-    lastMessages() {
-      const selectedChat = this.chats.find(chat => chat.id === this.selectedChatId);
-      const transformMessages = (message) => {
-        const { text } = message;
-        const textPart = text.find(({ type }) => type === 'text-message');
-        return {
-          text: textPart ? textPart.text : '',
-          id: message.id,
-          fromId: message.fromId,
-          isMy: message.fromId === this.myId,
-        };
-      };
-
-      return selectedChat
-        ? selectedChat.messages.slice(-20).map(transformMessages).filter(m => m.text !== '')
-        : [];
     },
   },
   created() {
@@ -96,7 +79,6 @@ export default {
       return;
     }
     this.selectedChatId = this.chatsInfo[0].id;
-    console.log(this.myId, this.lastMessages);
   },
   methods: {
     scrollTo,
@@ -143,24 +125,6 @@ export default {
 .charts {
   width: 100%;
   box-shadow: 0 0 20px black;
-}
-
-.message {
-  color: $main;
-  background-color: $complement;
-  border-radius: 10px;
-  padding: 5px 10px;
-  &:not(:last-child) {
-    margin-bottom: 15px;
-  }
-
-  &.my {
-    color: $complement;
-    border: 1px solid $complement;
-    box-shadow: 0 0 5px $complement;
-    background-color: $main;
-    text-align: right;
-  }
 }
 
 @media (min-width: $tiny-screen) {
