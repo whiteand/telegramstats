@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h4>Message count: {{ numberOfMessages }}</h4>
     <div
       v-for="m in lastMessages"
       :key="m.id"
@@ -11,12 +12,27 @@
 </template>
 <script>
 import { v } from 'explained-quartet';
+import { logv } from '@/utils';
 
 export default {
   name: 'LastMessages',
   props: {
     stats: {
-      validator: v(['null', {}]), // TODO: write this validator,
+      validator: logv(['null', {
+        personalInformation: {
+          userId: 'string',
+        },
+        chats: v.arrayOf({
+          id: 'string',
+          messages: v.arrayOf({
+            fromId: ['string', 'null'],
+            text: v.arrayOf({
+              type: 'string',
+              text: 'string',
+            }),
+          }),
+        }),
+      }]),
       required: true,
     },
     chatId: {
@@ -28,11 +44,16 @@ export default {
     myId() {
       return this.stats ? this.stats.personalInformation.userId : null;
     },
-    lastMessages() {
-      if (!this.stats) return [];
+    chat() {
+      if (!this.stats) return null;
       const { chats } = this.stats;
-      const selectedChat = chats.find(chat => chat.id === this.chatId);
-      if (!selectedChat) return [];
+      return chats.find(chat => chat.id === this.chatId) || null;
+    },
+    numberOfMessages() {
+      return this.chat ? this.chat.messages.length : 0;
+    },
+    lastMessages() {
+      if (!this.chat) return [];
 
       const transformMessages = (message) => {
         const { text } = message;
@@ -40,12 +61,11 @@ export default {
         return {
           text: textPart ? textPart.text : '',
           id: message.id,
-          fromId: message.fromId,
           isMy: message.fromId === this.myId,
         };
       };
 
-      return selectedChat.messages
+      return this.chat.messages
         .slice(-20)
         .map(transformMessages)
         .filter(m => m.text !== '');
@@ -56,6 +76,11 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/variables.scss';
 @import '@/assets/colors.scss';
+
+h4 {
+  text-transform: uppercase;
+  text-align: center;
+}
 
 .message {
   color: $main;

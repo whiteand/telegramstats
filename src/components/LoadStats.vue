@@ -105,7 +105,7 @@ const deserializePersonalInformation = info => ({
 const deserializeChat = chat => ({
   ...chat,
   id: chat.id.toString(),
-  name: chat.name || null,
+  name: chat.name || 'UnknownChat',
   messages: chat.messages ? chat.messages.map(deserializeMessage) : [],
 });
 

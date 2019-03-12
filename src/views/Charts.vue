@@ -12,7 +12,18 @@
         @contactUs="scrollToContactUs"
       />
     </header>
-    <div class="content">
+    <div
+      v-if="stats"
+      class="content"
+    >
+      <div class="infoblock">
+        <div class="infoblock-content">
+          <h3>Message Count</h3>
+          <MessageCount
+            :stats="stats"
+          />
+        </div>
+      </div>
       <h3>Choose chat</h3>
       <ChooseOne
         v-model="selectedChatId"
@@ -46,6 +57,7 @@ import Header from '@/components/Header.vue';
 import MainFooter from '@/components/MainFooter.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
 import LastMessages from '@/components/LastMessages.vue';
+import MessageCount from '@/components/MessageCount.vue';
 import { scroller } from 'vue-scrollto/src/scrollTo';
 import { mapGetters, mapState, mapActions } from 'vuex';
 
@@ -57,6 +69,7 @@ export default {
     Header,
     ChooseOne,
     MainFooter,
+    MessageCount,
     LastMessages,
   },
   data() {
