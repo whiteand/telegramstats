@@ -13,18 +13,22 @@
       />
     </header>
     <div class="content">
+      <h3>Choose chat</h3>
       <ChooseOne
         v-model="selectedChatId"
         :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
       />
-      <div class="infoblock">
-        <div class="infoblock-content">
-          <LastMessages
-            :stats="stats"
-            :chat-id="selectedChatId"
-          />
+      <template v-if="selectedChatId">
+        <div class="infoblock">
+          <div class="infoblock-content">
+            <h3>Last messages</h3>
+            <LastMessages
+              :stats="stats"
+              :chat-id="selectedChatId"
+            />
+          </div>
         </div>
-      </div>
+      </template>
     </div>
     <div
       id="contact-us"
@@ -106,6 +110,12 @@ export default {
 .content {
   color: $complement;
   background: $main;
+
+}
+
+h3 {
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .infoblock {
@@ -115,11 +125,6 @@ export default {
   align-items: center;
   min-height: 100vh;
   padding: 20px 0;
-
-  h3 {
-    text-transform: uppercase;
-    text-align: center;
-  }
 }
 
 .charts {

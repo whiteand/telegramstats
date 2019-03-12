@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h3>Last messages</h3>
     <div
       v-for="m in lastMessages"
       :key="m.id"
@@ -8,7 +7,6 @@
     >
       {{ m.text }}
     </div>
-    <div />
   </div>
 </template>
 <script>
