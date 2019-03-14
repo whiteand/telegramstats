@@ -12,27 +12,12 @@
 </template>
 <script>
 import { v } from 'explained-quartet';
-import { logv } from '@/utils';
 
 export default {
   name: 'LastMessages',
   props: {
     stats: {
-      validator: logv(['null', {
-        personalInformation: {
-          userId: 'string',
-        },
-        chats: v.arrayOf({
-          id: 'string',
-          messages: v.arrayOf({
-            fromId: ['string', 'null'],
-            text: v.arrayOf({
-              type: 'string',
-              text: 'string',
-            }),
-          }),
-        }),
-      }]),
+      type: Function,
       required: true,
     },
     chatId: {
@@ -42,11 +27,11 @@ export default {
   },
   computed: {
     myId() {
-      return this.stats ? this.stats.personalInformation.userId : null;
+      return this.stats ? this.stats().personalInformation.userId : null;
     },
     chat() {
       if (!this.stats) return null;
-      const { chats } = this.stats;
+      const { chats } = this.stats();
       return chats.find(chat => chat.id === this.chatId) || null;
     },
     numberOfMessages() {

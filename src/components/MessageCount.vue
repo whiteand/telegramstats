@@ -47,8 +47,6 @@
 
 <script>
 import HorizontalBarChart from '@/components/HorizontalBarChart.vue';
-import { v } from 'explained-quartet';
-import { logv } from '@/utils';
 
 export default {
   components: {
@@ -57,16 +55,7 @@ export default {
   props: {
     stats: {
       required: true,
-      validator: logv([
-        'null',
-        {
-          chats: v.arrayOf({
-            id: 'string',
-            name: 'string',
-            messages: 'array',
-          }),
-        },
-      ]),
+      type: Function,
     },
   },
   data() {
@@ -78,7 +67,7 @@ export default {
   },
   computed: {
     chats() {
-      return this.stats ? this.stats.chats : [];
+      return this.stats ? this.stats().chats : [];
     },
     chatsOptions() {
       const isAppropriateYear = (message) => {

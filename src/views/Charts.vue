@@ -59,7 +59,7 @@ import ChooseOne from '@/components/ChooseOne.vue';
 import LastMessages from '@/components/LastMessages.vue';
 import MessageCount from '@/components/MessageCount.vue';
 import { scroller } from 'vue-scrollto/src/scrollTo';
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 const scrollTo = scroller();
 
@@ -99,9 +99,6 @@ export default {
   },
   methods: {
     scrollTo,
-    ...mapActions({
-      setStats: 'setStats',
-    }),
     scrollToContactUs() {
       scrollTo('#contact-us', {
         onDone: () => {

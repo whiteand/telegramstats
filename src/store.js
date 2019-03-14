@@ -25,14 +25,19 @@ export default new Vuex.Store({
   getters: {
     isLoaded: state => Boolean(state.stats),
     chats: state => (state.stats
-      ? state.stats.chats
+      ? state.stats().chats
       : []),
-    myId: state => (state.stats ? state.stats.personalInformation.userId : null),
+    chatsDict: (state, getters) => getters.chats.reduce((dict, chat) => {
+      // eslint-disable-next-line
+      dict[chat.id || ''] = chat;
+      return dict;
+    }, {}),
+    myId: state => (state.stats ? state.stats().personalInformation.userId : null),
   },
   /* eslint-disable no-param-reassign */
   mutations: {
     [MUTATIONS.SET_STATS](state, stats) {
-      state.stats = stats;
+      state.stats = () => stats;
     },
   },
   /* eslint-enable */
