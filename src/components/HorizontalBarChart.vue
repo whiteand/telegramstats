@@ -73,7 +73,7 @@ export default {
       return this.items.map(item => ({
         caption: item[this.captionProp] || 'unknown',
         value: item[this.valueProp] || 0,
-      }));
+      })).filter(item => Number.isFinite(item.value));
     },
     maxValue() {
       const items = this.renderedItems;
