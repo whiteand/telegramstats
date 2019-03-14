@@ -38,6 +38,12 @@
       :items="getLetterBalance('(')"
       height="30px"
     />
+    <h4>Суммарная длина ахахахахов</h4>
+    <HorizontalBarChart
+      class="chart"
+      :items="haHaLengthBalance"
+      height="30px"
+    />
     <h4>Медиана времени ответа (в секундах)</h4>
     <HorizontalBarChart
       class="chart"
@@ -90,7 +96,9 @@ export default {
       return this.notFilteredMessages.length
         ? {
           min: new Date(this.notFilteredMessages[0].date).getFullYear(),
-          max: new Date(this.notFilteredMessages[this.notFilteredMessages.length - 1].date).getFullYear(),
+          max: new Date(
+            this.notFilteredMessages[this.notFilteredMessages.length - 1].date,
+          ).getFullYear(),
         }
         : {
           min: 1900,
@@ -202,6 +210,14 @@ export default {
     },
     otherText() {
       return this.otherTextMessages.map(m => m.text).filter(Boolean).join('\n');
+    },
+    haHaLengthBalance() {
+      const mymatch = this.myText.match(/[AXАХхaax]{2,}/g);
+      const my = mymatch ? mymatch.join('').length : 0;
+      const othermatch = this.otherText.match(/[AXАХхaax]{2,}/g);
+      console.log({ mymatch, othermatch });
+      const other = othermatch ? mymatch.join('').length : 0;
+      return this.getBalance(my, other);
     },
     chatName() {
       return this.chat ? this.chat.name : 'Other';

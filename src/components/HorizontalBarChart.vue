@@ -15,7 +15,11 @@
         </div>
         <div
           class="bar"
-          :style="`height: ${height}; width: ${item.value / fullValue * 100}%; background-color: ${barcolor}`"
+          :style="`
+            height: ${height};
+            width: ${item.value / fullValue * 100}%;
+            background-color: ${barcolor}
+          `.trim()"
         />
         <div
           class="content"
