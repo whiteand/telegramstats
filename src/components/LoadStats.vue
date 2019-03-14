@@ -90,7 +90,7 @@ const checkTelegramData = v({
     first_name: 'string',
     last_name: 'string',
     phone_number: 'string',
-    username: 'string',
+    username: ['string', 'nil'],
   },
 });
 
@@ -99,7 +99,7 @@ const deserializePersonalInformation = info => ({
   firstName: info.first_name,
   lastName: info.last_name,
   phoneNumber: info.phone_number,
-  username: info.username,
+  username: info.username || null,
 });
 
 const deserializeChat = chat => ({
@@ -172,6 +172,7 @@ export default {
         const data = JSON.parse(content);
         v();
         if (!checkTelegramData(data)) {
+          console.log(v.explanation);
           throw new TypeError('Json file is invalid');
         }
         v();

@@ -14,6 +14,20 @@
       >
         Select all
       </button>
+      <input
+        v-model.number="minYear"
+        type="number"
+        placeholder="Min year"
+        min="0"
+        max="2100"
+      >
+      <input
+        v-model.number="maxYear"
+        type="number"
+        placeholder="Min year"
+        min="0"
+        max="2100"
+      >
       <button
         class="select-all"
         @click="selected=[]"
@@ -58,6 +72,8 @@ export default {
   data() {
     return {
       selected: [],
+      minYear: 0,
+      maxYear: 2100,
     };
   },
   computed: {
@@ -65,14 +81,22 @@ export default {
       return this.stats ? this.stats.chats : [];
     },
     chatsOptions() {
-      const chats = this.chats.map(chat => ({
+      const isAppropriateYear = (message) => {
+        const date = new Date(message.date);
+        const year = date.getFullYear();
+        return year >= this.minYear && year <= this.maxYear;
+      };
+      const transformChat = chat => ({
         label: chat.name,
         value: {
           id: chat.id,
           name: chat.name,
-          count: chat.messages.length,
+          count: chat.messages
+            .filter(isAppropriateYear)
+            .length,
         },
-      }));
+      });
+      const chats = this.chats.map(transformChat);
       chats.sort((chat1, chat2) => chat2.value.count - chat1.value.count);
       return chats;
     },
@@ -80,8 +104,24 @@ export default {
       if (!this.selected || this.selected.length === 0) return [];
       const chats = this.selected.map(e => e.value);
       chats.sort((chat1, chat2) => chat2.count - chat1.count);
-      const maxCount = chats[0].count;
-      return chats.map(el => ({ ...el, percentage: el.count / maxCount }));
+      const fullCount = chats.map(chat => chat.count).reduce((sum, count) => sum + count, 0);
+      const DELTA_PERCENTAGE = 0.01;
+      const allChats = chats.map(el => ({ ...el, percentage: el.count / fullCount }));
+      const selectedChats = allChats.filter(el => el.percentage > DELTA_PERCENTAGE);
+      const otherId = -1;
+      const otherName = 'Others';
+      const otherCount = allChats.filter(chat => chat.percentage <= DELTA_PERCENTAGE)
+        .reduce((sum, chat) => sum + chat.count, 0);
+      const otherPercentage = otherCount / fullCount;
+      if (otherCount > 0) {
+        selectedChats.push({
+          id: otherId,
+          name: otherName,
+          count: otherCount,
+          percentage: otherPercentage,
+        });
+      }
+      return selectedChats;
     },
   },
   methods: {
