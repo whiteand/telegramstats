@@ -14,20 +14,6 @@
       >
         Select all
       </button>
-      <input
-        v-model.number="minYear"
-        type="number"
-        placeholder="Min year"
-        min="0"
-        max="2100"
-      >
-      <input
-        v-model.number="maxYear"
-        type="number"
-        placeholder="Min year"
-        min="0"
-        max="2100"
-      >
       <button
         class="select-all"
         @click="selected=[]"
@@ -35,6 +21,18 @@
         Clear
       </button>
     </div>
+    <div>
+      <el-slider
+        :value="yearRange"
+        range
+        :min="minYearRangeValue"
+        :max="maxYearRangeValue"
+        @input="onYearRangeInput"
+      />
+    </div>
+    <h4>
+      {{ yearRange[0] }} - {{ yearRange[1] }}
+    </h4>
     <HorizontalBarChart
       class="chart"
       :items="selectedChats"
@@ -61,22 +59,40 @@ export default {
   data() {
     return {
       selected: [],
-      minYear: 0,
-      maxYear: 2100,
+      yearRange: [2000, 2100],
     };
   },
   computed: {
     chats() {
       return this.stats ? this.stats().chats : [];
     },
+    minYearRangeValue() {
+      if (this.chats.length === 0) return 2000;
+      const getMin = (minYear, { messages: [m] }) => (
+        m
+          ? Math.min(minYear, new Date(m.date).getFullYear())
+          : minYear
+      );
+      return this.chats.reduce(getMin, 3000);
+    },
+    maxYearRangeValue() {
+      if (this.chats.length === 0) return 2000;
+      const getMax = (maxYear, { messages }) => (
+        messages.length > 0
+          ? Math.max(maxYear, new Date(messages[messages.length - 1].date).getFullYear())
+          : maxYear
+      );
+      return this.chats.reduce(getMax, 1900);
+    },
     chatsOptions() {
+      const [minYear, maxYear] = this.yearRange;
       const isAppropriateYear = (message) => {
         const date = new Date(message.date);
         const year = date.getFullYear();
-        return year >= this.minYear && year <= this.maxYear;
+        return year >= minYear && year <= maxYear;
       };
       const transformChat = chat => ({
-        label: chat.name,
+        label: `${chat.name} (${chat.id})`,
         value: {
           id: chat.id,
           name: chat.name,
@@ -114,6 +130,10 @@ export default {
     },
   },
   methods: {
+    onYearRangeInput([min, max]) {
+      this.yearRange = [min, max];
+      this.selected = [...this.chatsOptions];
+    },
     selectAll() {
       this.selected = [...this.chatsOptions];
     },

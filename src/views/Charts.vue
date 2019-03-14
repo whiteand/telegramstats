@@ -32,6 +32,15 @@
       <template v-if="selectedChatId">
         <div class="infoblock">
           <div class="infoblock-content">
+            <h3>Chat balance charts:</h3>
+            <ChatBalanceCharts
+              :stats="stats"
+              :chat-id="stats"
+            />
+          </div>
+        </div>
+        <div class="infoblock">
+          <div class="infoblock-content">
             <h3>Last messages</h3>
             <LastMessages
               :stats="stats"
@@ -58,6 +67,7 @@ import MainFooter from '@/components/MainFooter.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
 import LastMessages from '@/components/LastMessages.vue';
 import MessageCount from '@/components/MessageCount.vue';
+import ChatBalanceCharts from '@/components/ChatBalanceCharts.vue';
 import { scroller } from 'vue-scrollto/src/scrollTo';
 import { mapGetters, mapState } from 'vuex';
 
@@ -71,6 +81,7 @@ export default {
     MainFooter,
     MessageCount,
     LastMessages,
+    ChatBalanceCharts,
   },
   data() {
     return {

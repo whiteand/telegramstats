@@ -63,12 +63,13 @@ const deserializeText = (text) => {
   return text.map(textElement => (typeof textElement === 'string' ? { type: TEXT_MESSAGE_TYPE, text: textElement } : textElement));
 };
 
-const deserializeMessage = message => ({
+const deserializeMessage = personalInformation => message => ({
   _message: message,
   date: message.date,
   from: message.from || null,
-  fromId: message.from_id ? message.from_id.toString() : null,
+  fromId: (message.from_id || message.actor_id) ? (message.from_id || message.actor_id).toString() : null,
   id: message.id.toString(),
+  my: [message.from_id, message.actor_id].includes(personalInformation.user_id),
   mediaType: message.media_type || null,
   text: deserializeText(message.text),
 });
@@ -102,17 +103,17 @@ const deserializePersonalInformation = info => ({
   username: info.username || null,
 });
 
-const deserializeChat = chat => ({
+const deserializeChat = personalInformation => chat => ({
   ...chat,
   id: chat.id.toString(),
   name: chat.name || 'UnknownChat',
-  messages: chat.messages ? chat.messages.map(deserializeMessage) : [],
+  messages: chat.messages ? chat.messages.map(deserializeMessage(personalInformation)) : [],
 });
 
 const deserialize = (data) => {
   const { chats, personal_information: personalInformation } = data;
   const { list } = chats;
-  const newList = list.map(deserializeChat);
+  const newList = list.map(deserializeChat(personalInformation));
   const newPersonalInformation = deserializePersonalInformation(personalInformation);
   return { chats: newList, personalInformation: newPersonalInformation };
 };
@@ -172,11 +173,12 @@ export default {
         const data = JSON.parse(content);
         v();
         if (!checkTelegramData(data)) {
-          console.log(v.explanation);
           throw new TypeError('Json file is invalid');
         }
         v();
-        this.$emit('loaded', deserialize(data));
+        const deserialized = deserialize(data);
+        console.log(deserialized);
+        this.$emit('loaded', deserialized);
         return true;
       } catch (error) {
         // eslint-disable-next-line
