@@ -80,13 +80,13 @@ export default {
       })).filter(item => Number.isFinite(item.value));
     },
     maxValue() {
+      if (this.renderedItems.length === 0) return 100;
       const items = this.renderedItems;
-      if (this.items.length === 0) return 100;
       return Math.max(...items.map(item => item.value));
     },
     fullValue() {
+      if (this.renderedItems.length === 0) return 100;
       const items = this.renderedItems;
-      if (this.items.length === 0) return 100;
       return items.reduce((sum, { value }) => sum + value, 0);
     },
   },

@@ -215,8 +215,7 @@ export default {
       const mymatch = this.myText.match(/[AXАХхaax]{2,}/g);
       const my = mymatch ? mymatch.join('').length : 0;
       const othermatch = this.otherText.match(/[AXАХхaax]{2,}/g);
-      console.log({ mymatch, othermatch });
-      const other = othermatch ? mymatch.join('').length : 0;
+      const other = othermatch ? othermatch.join('').length : 0;
       return this.getBalance(my, other);
     },
     chatName() {
