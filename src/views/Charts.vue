@@ -34,8 +34,7 @@
           <div class="infoblock-content">
             <h3>Chat balance charts:</h3>
             <ChatBalanceCharts
-              :stats="stats"
-              :chat-id="stats"
+              :chat="chatsDict[selectedChatId]"
             />
           </div>
         </div>
@@ -92,6 +91,7 @@ export default {
   computed: {
     ...mapGetters({
       chats: 'chats',
+      chatsDict: 'chatsDict',
       isLoaded: 'isLoaded',
     }),
     ...mapState({

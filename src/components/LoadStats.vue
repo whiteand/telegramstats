@@ -25,6 +25,7 @@
 <script>
 import { obj as v } from 'explained-quartet';
 import { compose, path } from 'ramda';
+import { TEXT_MESSAGE_TYPE } from '@/utils';
 
 const checkMessage = v({
   date: v.and(
@@ -51,7 +52,6 @@ const checkMessage = v({
  *  text: Array<{ type: string, text: string }>
  * }} Message
  */
-const TEXT_MESSAGE_TYPE = 'text-message';
 
 const deserializeText = (text) => {
   if (typeof text === 'string') {
@@ -67,7 +67,9 @@ const deserializeMessage = personalInformation => message => ({
   _message: message,
   date: message.date,
   from: message.from || null,
-  fromId: (message.from_id || message.actor_id) ? (message.from_id || message.actor_id).toString() : null,
+  fromId: (message.from_id || message.actor_id)
+    ? (message.from_id || message.actor_id).toString()
+    : null,
   id: message.id.toString(),
   my: [message.from_id, message.actor_id].includes(personalInformation.user_id),
   mediaType: message.media_type || null,
@@ -177,7 +179,6 @@ export default {
         }
         v();
         const deserialized = deserialize(data);
-        console.log(deserialized);
         this.$emit('loaded', deserialized);
         return true;
       } catch (error) {

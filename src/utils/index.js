@@ -15,3 +15,5 @@ export const logv = (schema) => {
     return res;
   };
 };
+
+export const TEXT_MESSAGE_TYPE = 'textMessage';
