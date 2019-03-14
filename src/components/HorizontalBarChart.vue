@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="items && items.length"
+    v-if="renderedItems && renderedItems.length"
     class="percentage-chart"
   >
     <transition-group name="fade">
