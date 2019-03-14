@@ -96,10 +96,18 @@ export default {
 
 .percentage {
   position: absolute;
-  left: 100%;
+  right: 10px;
   height: 100%;
   display: flex;
   align-items: center;
+
+  &::after {
+    content: ')';
+  }
+
+  &::before {
+    content: '(';
+  }
 }
 
 .content,
@@ -118,6 +126,6 @@ export default {
 
 .value {
   position: absolute;
-  right: 25px;
+  right: 60px;
 }
 </style>
