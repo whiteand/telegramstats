@@ -7,6 +7,7 @@ export const logv = (schema) => {
     v();
     const res = isValid(value);
     if (!res) {
+      // eslint-disable-next-line
       console.log({
         value,
         explanation: v.explanation,
