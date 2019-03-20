@@ -1,21 +1,21 @@
 <template>
-  <div class="message-count-wrapper">
+  <div class="message-count_message-count-wrapper">
     <v-select
       v-model="selected"
       multiple
-      class="multiselect"
+      class="message-count_multiselect"
       placeholder="Select chats for charts"
       :options="chatsOptions"
     />
-    <div class="buttons">
+    <div class="message-count_buttons">
       <button
-        class="select-all"
+        class="message-count_select-all"
         @click="selectAll"
       >
         Select all
       </button>
       <button
-        class="select-all"
+        class="message-count_select-all"
         @click="selected=[]"
       >
         Clear
@@ -30,11 +30,11 @@
         @input="onYearRangeInput"
       />
     </div>
-    <h4>
+    <h4 class="color-complement">
       {{ yearRange[0] }} - {{ yearRange[1] }}
     </h4>
     <HorizontalBarChart
-      class="chart"
+      class="message-count_chart"
       :items="selectedChats"
       caption-prop="name"
       value-prop="count"
@@ -141,20 +141,20 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/assets/colors.scss";
 
-.message-count-wrapper {
+.message-count_message-count-wrapper {
   width: 100%;
 }
 
-.multiselect {
+.message-count_multiselect {
   cursor: pointer;
   min-width: 250px;
   padding: 10px;
 }
 
-.buttons {
+.message-count_buttons {
   display: flex;
   justify-content: space-around;
   margin-bottom: 10px;
@@ -169,7 +169,9 @@ export default {
   }
 }
 
-.chart {
+.message-count_chart {
   width: 100%;
+  color: $complement;
+
 }
 </style>

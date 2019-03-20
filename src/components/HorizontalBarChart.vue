@@ -7,14 +7,14 @@
       <div
         v-for="item in renderedItems"
         :key="item.caption+' '+item.value"
-        class="chart-item"
+        class="percentage-chart_chart-item"
         :style="`height: ${height}; background-color: ${bgcolor}`"
       >
-        <div class="percentage">
-          {{ (item.value / fullValue * 100).toFixed(0) }}%
+        <div class="percentage-chart_percentage color-complement">
+          {{ getPercentage(item) }}%
         </div>
         <div
-          class="bar"
+          class="percentage-chart_bar"
           :style="`
             height: ${height};
             width: ${item.value / fullValue * 100}%;
@@ -22,13 +22,13 @@
           `.trim()"
         />
         <div
-          class="content"
+          class="percentage-chart_content"
           :style="`color: ${color}`"
         >
-          <div class="text">
+          <div class="percentage-chart_text">
             {{ item.caption }}
           </div>
-          <div class="value">
+          <div class="percentage-chart_value">
             {{ item.value }}
           </div>
         </div>
@@ -90,20 +90,27 @@ export default {
       return items.reduce((sum, { value }) => sum + value, 0);
     },
   },
+  methods: {
+    getPercentage({ value }) {
+      if (!value) return '0';
+      return (value / this.fullValue * 100).toFixed(0);
+    },
+  },
 };
 </script>
 
-<style lang="scss" scoped>
-.chart-item {
+<style lang="scss">
+.percentage-chart_chart-item {
   position: relative;
 }
 
-.percentage {
+.percentage-chart_percentage {
   position: absolute;
   right: 10px;
   height: 100%;
   display: flex;
   align-items: center;
+  z-index: 1;
 
   &::after {
     content: ')';
@@ -114,21 +121,21 @@ export default {
   }
 }
 
-.content,
-.bar {
+.percentage-chart_content,
+.percentage-chart_bar {
   position: absolute;
   top: 0;
   height: 100%;
 }
 
-.content {
+.percentage-chart_content {
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
 }
 
-.value {
+.percentage-chart_value {
   position: absolute;
   right: 60px;
 }

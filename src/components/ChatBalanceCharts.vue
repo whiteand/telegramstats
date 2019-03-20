@@ -12,9 +12,11 @@
     <div class="chat-balance_date-range-picker">
       <el-date-picker
         v-model="dateRange"
+        format="dd.MM.yyyy"
         type="daterange"
         align="center"
         range-separator="To"
+        :default-time="['00:00:00', '23:59:59']"
         start-placeholder="Start date"
         end-placeholder="End date"
       />
@@ -340,7 +342,7 @@ export default {
   width: 500px;
 }
 
-.el-input__inner {
+.el-range-editor.el-input__inner {
   width: 100%;
 }
 

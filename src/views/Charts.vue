@@ -18,7 +18,7 @@
     >
       <el-collapse
         v-model="activeCharts"
-        accordeon
+        accordion
       >
         <el-collapse-item
           class="bg-color-main"
@@ -161,6 +161,10 @@ export default {
   padding: 10px;
   background-color: $main;
   color: $complement;
+}
+
+.el-collapse-item__content {
+  padding-bottom: 0;
 }
 
 h3 {
