@@ -34,7 +34,7 @@
           <div class="infoblock-content">
             <h3>Chat balance charts:</h3>
             <ChatBalanceCharts
-              :chat="chatsDict[selectedChatId]"
+              :chat="() => getChatById(selectedChatId)"
             />
           </div>
         </div>
@@ -100,6 +100,7 @@ export default {
     chatsInfo() {
       return this.chats.map(chat => ({ name: chat.name || 'Unknown', id: chat.id }));
     },
+
   },
   created() {
     if (!this.isLoaded) {
@@ -110,6 +111,9 @@ export default {
   },
   methods: {
     scrollTo,
+    getChatById(id) {
+      return this.chatsDict[id];
+    },
     scrollToContactUs() {
       scrollTo('#contact-us', {
         onDone: () => {

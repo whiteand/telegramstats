@@ -80,7 +80,7 @@ export default {
   },
   props: {
     chat: {
-      type: Object,
+      type: Function,
       required: true,
     },
   },
@@ -106,7 +106,7 @@ export default {
         };
     },
     notFilteredMessages() {
-      return this.chat ? this.chat.messages : [];
+      return this.chat ? this.chat().messages : [];
     },
     messages() {
       return this.notFilteredMessages.filter(this.filters());
@@ -219,7 +219,7 @@ export default {
       return this.getBalance(my, other);
     },
     chatName() {
-      return this.chat ? this.chat.name : 'Other';
+      return this.chat ? this.chat().name : 'Other';
     },
     messageCountBallance() {
       const myCount = this.messages.reduce((sum, m) => (m.my ? sum + 1 : sum), 0);

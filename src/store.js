@@ -27,11 +27,7 @@ export default new Vuex.Store({
     chats: state => (state.stats
       ? state.stats().chats
       : []),
-    chatsDict: (state, getters) => getters.chats.reduce((dict, chat) => {
-      // eslint-disable-next-line
-      dict[chat.id || ''] = chat;
-      return dict;
-    }, {}),
+    chatsDict: (state, getters) => getters.chats.reduce((dict, chat) => ({ ...dict, [chat.id || '']: chat }), {}),
     myId: state => (state.stats ? state.stats().personalInformation.userId : null),
   },
   /* eslint-disable no-param-reassign */
