@@ -68,10 +68,13 @@ export default {
 .choose-one-item {
   color: $complement;
   cursor: pointer;
+  padding: 0 10px;
+  font-size: 1rem;
 
   &.chosen {
+    font-weight: bold;
     color: $accent;
-    text-shadow: 0 0 1px $main;
+    background-color: $complement;
   }
 }
 </style>
