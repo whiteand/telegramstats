@@ -14,61 +14,61 @@
     </div>
     <h4>Количество сообщений</h4>
     <HorizontalBarChart
-class="chart"
-                        :items="messageCountBallance"
-height="30px"
-/>
+      class="chart"
+      :items="messageCountBallance"
+      height="30px"
+    />
     <h4>Написано символов текста</h4>
     <HorizontalBarChart
-class="chart"
-                        :items="messageTextLengthBallance"
-height="30px"
-/>
+      class="chart"
+      :items="messageTextLengthBallance"
+      height="30px"
+    />
     <h4>Отослано стиккеров</h4>
     <HorizontalBarChart
-class="chart"
-                        :items="stickerMesagesCountBalance"
-height="30px"
-/>
+      class="chart"
+      :items="stickerMesagesCountBalance"
+      height="30px"
+    />
     <h4>Количество весёлых смайлов ')'</h4>
     <HorizontalBarChart
-class="chart"
-                        :items="getLetterBalance(')')"
-height="30px"
-/>
+      class="chart"
+      :items="getLetterBalance(')')"
+      height="30px"
+    />
     <h4>Количество грустных смайлов '('</h4>
     <HorizontalBarChart
-class="chart"
-                        :items="getLetterBalance('(')"
-height="30px"
-/>
+      class="chart"
+      :items="getLetterBalance('(')"
+      height="30px"
+    />
     <h4>Суммарная длина ахахахахов</h4>
     <HorizontalBarChart
-class="chart"
-                        :items="haHaLengthBalance"
-height="30px"
-/>
+      class="chart"
+      :items="haHaLengthBalance"
+      height="30px"
+    />
     <h4>Медиана времени ответа (в секундах)</h4>
     <HorizontalBarChart
-class="chart"
-                        :items="medianResponseBalance"
-height="30px"
-/>
+      class="chart"
+      :items="medianResponseBalance"
+      height="30px"
+    />
     <h4>Беседы</h4>
     <div>
       <h5>Talk timeout: {{ fastTalkTimeout }} minutes</h5>
       <el-slider
-v-model="fastTalkTimeout"
-                 :min="1"
-:max="1000"
-/>
+        v-model="fastTalkTimeout"
+        :min="1"
+        :max="1000"
+      />
       <h5>Talk count: {{ talks.length }}</h5>
       <h4>Инициатор</h4>
       <HorizontalBarChart
-class="chart"
-                          :items="talksInitiationBalance"
-height="30px"
-/>
+        class="chart"
+        :items="talksInitiationBalance"
+        height="30px"
+      />
     </div>
   </div>
 </template>
@@ -254,7 +254,6 @@ export default {
       deep: true,
       immediate: true,
       handler(dateBounds) {
-        console.log({ dateBounds });
         this.dateRange = [...dateBounds];
       },
     },
