@@ -63,18 +63,22 @@ const deserializeText = (text) => {
   return text.map(textElement => (typeof textElement === 'string' ? { type: TEXT_MESSAGE_TYPE, text: textElement } : textElement));
 };
 
-const deserializeMessage = personalInformation => message => ({
-  _message: message,
-  date: message.date,
-  from: message.from || null,
-  fromId: (message.from_id || message.actor_id)
-    ? (message.from_id || message.actor_id).toString()
-    : null,
-  id: message.id.toString(),
-  my: [message.from_id, message.actor_id].includes(personalInformation.user_id),
-  mediaType: message.media_type || null,
-  text: deserializeText(message.text),
-});
+const deserializeMessage = personalInformation => (message) => {
+  const textArray = deserializeText(message.text);
+  return {
+    _message: message,
+    date: message.date,
+    from: message.from || null,
+    fromId: (message.from_id || message.actor_id)
+      ? (message.from_id || message.actor_id).toString()
+      : null,
+    id: message.id.toString(),
+    my: [message.from_id, message.actor_id].includes(personalInformation.user_id),
+    mediaType: message.media_type || null,
+    text: textArray,
+    textValue: textArray.filter(e => e.type === TEXT_MESSAGE_TYPE).map(e => e.text).join('\n'),
+  };
+};
 
 const checkTelegramData = v({
   chats: {

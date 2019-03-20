@@ -3,7 +3,7 @@
     id="home"
     class="charts"
   >
-    <header class="header">
+    <header class="charts_header">
       <Header
         :hidden-links="[
           { emit: 'contactUs', title: 'Сообщить нам' }
@@ -14,44 +14,61 @@
     </header>
     <div
       v-if="stats"
-      class="content"
+      class="charts_content bg-color-main"
     >
-      <div class="infoblock">
-        <div class="infoblock-content">
-          <h3>Message Count</h3>
-          <MessageCount
-            :stats="stats"
+      <el-collapse
+        v-model="activeCharts"
+        accordeon
+      >
+        <el-collapse-item
+          class="bg-color-main"
+          title="Сравнение чатов по кол-ву сообщений"
+          name="messageCount"
+        >
+          <div class="charts_infoblock">
+            <div class="charts_infoblock-content">
+              <h3>Message Count</h3>
+              <MessageCount
+                :stats="stats"
+              />
+            </div>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item
+          class="bg-color-main"
+          title="Статистика чата"
+          name="chatBalance"
+        >
+          <h3>Choose chat</h3>
+          <ChooseOne
+            v-model="selectedChatId"
+            :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
           />
-        </div>
-      </div>
-      <h3>Choose chat</h3>
-      <ChooseOne
-        v-model="selectedChatId"
-        :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
-      />
-      <template v-if="selectedChatId">
-        <div class="infoblock">
-          <div class="infoblock-content">
-            <h3>Chat balance charts:</h3>
-            <ChatBalanceCharts
-              :chat="() => getChatById(selectedChatId)"
-            />
-          </div>
-        </div>
-        <div class="infoblock">
-          <div class="infoblock-content">
-            <h3>Last messages</h3>
-            <LastMessages
-              :stats="stats"
-              :chat-id="selectedChatId"
-            />
-          </div>
-        </div>
-      </template>
+          <template v-if="selectedChatId">
+            <div class="charts_infoblock">
+              <div class="charts_infoblock-content">
+                <h3>Chat balance charts:</h3>
+                <ChatBalanceCharts
+                  :chat="() => getChatById(selectedChatId)"
+                />
+              </div>
+            </div>
+            <div class="charts_infoblock">
+              <div class="charts_infoblock-content">
+                <h3>Last messages</h3>
+                <LastMessages
+                  :stats="stats"
+                  :chat-id="selectedChatId"
+                />
+              </div>
+            </div>
+          </template>
+        </el-collapse-item>
+      </el-collapse>
     </div>
     <div
       id="contact-us"
-      class="footer"
+      class="charts_footer"
     >
       <MainFooter
         :is-highlighted="isFooterHighlighted"
@@ -86,6 +103,7 @@ export default {
     return {
       isFooterHighlighted: false,
       selectedChatId: null,
+      activeCharts: [],
     };
   },
   computed: {
@@ -128,28 +146,39 @@ export default {
 
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@/assets/variables.scss';
 @import '@/assets/colors.scss';
 
-.content {
+.charts_content {
   color: $complement;
   background: $main;
+}
 
+.el-collapse-item__header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 10px;
+  background-color: $main;
+  color: $complement;
 }
 
 h3 {
+  margin: 0;
+  background-color: $main;
+  color: $complement;
   text-transform: uppercase;
   text-align: center;
 }
 
-.infoblock {
+.charts_infoblock {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   min-height: 100vh;
   padding: 20px 0;
+  background-color: $main;
 }
 
 .charts {
@@ -158,7 +187,7 @@ h3 {
 }
 
 @media (min-width: $tiny-screen) {
-  .infoblock {
+  .charts_infoblock {
     &-content {
       max-width: 80%;
     }
@@ -171,7 +200,7 @@ h3 {
     margin: 0 auto;
   }
 
-  .infoblock {
+  .charts_infoblock {
     padding: 30px;
   }
 }

@@ -1,8 +1,15 @@
 <template>
-  <div class="chat-balance-charts-wrapper">
-    <h4>Фильтры</h4>
-    <h5>Промежуток: {{ dateRange[0].toLocaleString() }} - {{ dateRange[1].toLocaleString() }}</h5>
-    <div class="date-range-picker">
+  <div class="chat-balance_chat-balance-charts-wrapper">
+    <h4 class="chat-balance_block-title">
+      Фильтры
+    </h4>
+    <h5 class="chat-balance_additional-info">
+      Промежуток: {{ dateRange[0].toLocaleString() }} - {{ dateRange[1].toLocaleString() }}
+    </h5>
+    <h5 class="chat-balance_additional-info">
+      Сообщений: {{ messages.length }}
+    </h5>
+    <div class="chat-balance_date-range-picker">
       <el-date-picker
         v-model="dateRange"
         type="daterange"
@@ -12,60 +19,82 @@
         end-placeholder="End date"
       />
     </div>
-    <h4>Количество сообщений</h4>
+    <h4 class="chat-balance_block-title">
+      Количество сообщений
+    </h4>
     <HorizontalBarChart
-      class="chart"
+      class="chat-balance_chart"
       :items="messageCountBallance"
       height="30px"
     />
-    <h4>Написано символов текста</h4>
+    <h4 class="chat-balance_block-title">
+      Написано символов текста
+    </h4>
     <HorizontalBarChart
-      class="chart"
+      class="chat-balance_chart"
       :items="messageTextLengthBallance"
       height="30px"
     />
-    <h4>Отослано стиккеров</h4>
+    <h4 class="chat-balance_block-title">
+      Отослано стиккеров
+    </h4>
     <HorizontalBarChart
-      class="chart"
+      class="chat-balance_chart"
       :items="stickerMesagesCountBalance"
       height="30px"
     />
-    <h4>Количество весёлых смайлов ')'</h4>
+    <h4 class="chat-balance_block-title">
+      Количество весёлых смайлов ')'
+    </h4>
     <HorizontalBarChart
-      class="chart"
+      class="chat-balance_chart"
       :items="getLetterBalance(')')"
       height="30px"
     />
-    <h4>Количество грустных смайлов '('</h4>
+    <h4 class="chat-balance_block-title">
+      Количество грустных смайлов '('
+    </h4>
     <HorizontalBarChart
-      class="chart"
+      class="chat-balance_chart"
       :items="getLetterBalance('(')"
       height="30px"
     />
-    <h4>Суммарная длина ахахахахов</h4>
+    <h4 class="chat-balance_block-title">
+      Суммарная длина ахахахахов
+    </h4>
     <HorizontalBarChart
-      class="chart"
+      class="chat-balance_chart"
       :items="haHaLengthBalance"
       height="30px"
     />
-    <h4>Медиана времени ответа (в секундах)</h4>
+    <h4 class="chat-balance_block-title">
+      Медиана времени ответа (в секундах)
+    </h4>
     <HorizontalBarChart
-      class="chart"
+      class="chat-balance_chart"
       :items="medianResponseBalance"
       height="30px"
     />
-    <h4>Беседы</h4>
+    <h4 class="chat-balance_block-title">
+      Беседы
+    </h4>
     <div>
-      <h5>Talk timeout: {{ fastTalkTimeout }} minutes</h5>
+      <h5 class="chat-balance_additional-info">
+        Talk timeout: {{ fastTalkTimeout }} minutes
+      </h5>
       <el-slider
         v-model="fastTalkTimeout"
         :min="1"
         :max="1000"
       />
-      <h5>Talk count: {{ talks.length }}</h5>
-      <h4>Инициатор</h4>
+      <h5 class="chat-balance_additional-info">
+        Talk count: {{ talks.length }}
+      </h5>
+      <h4 class="chat-balance_block-title">
+        Инициатор
+      </h4>
       <HorizontalBarChart
-        class="chart"
+        class="chat-balance_chart"
         :items="talksInitiationBalance"
         height="30px"
       />
@@ -304,8 +333,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.chat-balance-charts-wrapper {
+<style lang="scss">
+@import '@/assets/colors.scss';
+
+.chat-balance_chat-balance-charts-wrapper {
   width: 500px;
 }
 
@@ -313,7 +344,9 @@ export default {
   width: 100%;
 }
 
-h4 {
+.chat-balance_additional-info,
+.chat-balance_block-title {
+  color: $complement;
   text-align: center;
 }
 </style>

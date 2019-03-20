@@ -16,3 +16,15 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+.bg-color-main {
+  background-color: $main;
+}
+
+.bg-color-accent {
+  background-color: $accent;
+}
+
+.bg-color-complement {
+  background-color: $complement;
+}
