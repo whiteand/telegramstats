@@ -1,70 +1,74 @@
 <template>
   <div class="chat-balance-charts-wrapper">
     <h4>Фильтры</h4>
-    <h5>Промежуток: {{ yearRange[0] }} - {{ yearRange[1] }} </h5>
-    <el-slider
-      v-model="yearRange"
-      range
-      :min="yearBounds.min"
-      :max="yearBounds.max"
-    />
+    <h5>Промежуток: {{ dateRange[0].toLocaleString() }} - {{ dateRange[1].toLocaleString() }}</h5>
+    <div class="date-range-picker">
+      <el-date-picker
+        v-model="dateRange"
+        type="daterange"
+        align="center"
+        range-separator="To"
+        start-placeholder="Start date"
+        end-placeholder="End date"
+      />
+    </div>
     <h4>Количество сообщений</h4>
     <HorizontalBarChart
-      class="chart"
-      :items="messageCountBallance"
-      height="30px"
-    />
+class="chart"
+                        :items="messageCountBallance"
+height="30px"
+/>
     <h4>Написано символов текста</h4>
     <HorizontalBarChart
-      class="chart"
-      :items="messageTextLengthBallance"
-      height="30px"
-    />
+class="chart"
+                        :items="messageTextLengthBallance"
+height="30px"
+/>
     <h4>Отослано стиккеров</h4>
     <HorizontalBarChart
-      class="chart"
-      :items="stickerMesagesCountBalance"
-      height="30px"
-    />
+class="chart"
+                        :items="stickerMesagesCountBalance"
+height="30px"
+/>
     <h4>Количество весёлых смайлов ')'</h4>
     <HorizontalBarChart
-      class="chart"
-      :items="getLetterBalance(')')"
-      height="30px"
-    />
+class="chart"
+                        :items="getLetterBalance(')')"
+height="30px"
+/>
     <h4>Количество грустных смайлов '('</h4>
     <HorizontalBarChart
-      class="chart"
-      :items="getLetterBalance('(')"
-      height="30px"
-    />
+class="chart"
+                        :items="getLetterBalance('(')"
+height="30px"
+/>
     <h4>Суммарная длина ахахахахов</h4>
     <HorizontalBarChart
-      class="chart"
-      :items="haHaLengthBalance"
-      height="30px"
-    />
+class="chart"
+                        :items="haHaLengthBalance"
+height="30px"
+/>
     <h4>Медиана времени ответа (в секундах)</h4>
     <HorizontalBarChart
-      class="chart"
-      :items="medianResponseBalance"
-      height="30px"
-    />
+class="chart"
+                        :items="medianResponseBalance"
+height="30px"
+/>
     <h4>Беседы</h4>
     <div>
       <h5>Talk timeout: {{ fastTalkTimeout }} minutes</h5>
       <el-slider
-        v-model="fastTalkTimeout"
-        :min="1"
-        :max="1000"
-      />
+v-model="fastTalkTimeout"
+                 :min="1"
+:max="1000"
+/>
       <h5>Talk count: {{ talks.length }}</h5>
       <h4>Инициатор</h4>
       <HorizontalBarChart
-        class="chart"
-        :items="talksInitiationBalance"
-        height="30px"
-      />
+class="chart"
+                          :items="talksInitiationBalance"
+height="30px"
+/>
     </div>
   </div>
 </template>
@@ -88,22 +92,20 @@ export default {
     return {
       talkTimeout: 60,
       fastTalkTimeout: 60,
+      dateRange: [Date.now(), Date.now() + 1],
       yearRange: [1900, 2100],
     };
   },
   computed: {
-    yearBounds() {
+    dateBounds() {
       return this.notFilteredMessages.length
-        ? {
-          min: new Date(this.notFilteredMessages[0].date).getFullYear(),
-          max: new Date(
+        ? [
+          new Date(this.notFilteredMessages[0].date),
+          new Date(
             this.notFilteredMessages[this.notFilteredMessages.length - 1].date,
-          ).getFullYear(),
-        }
-        : {
-          min: 1900,
-          max: 2100,
-        };
+          ),
+        ]
+        : [new Date(1971), new Date(2100)];
     },
     notFilteredMessages() {
       return this.chat ? this.chat().messages : [];
@@ -118,7 +120,10 @@ export default {
       let lastMessage = currentTalk[currentTalk.length - 1];
       for (let i = 1; i < this.messages.length; i += 1) {
         const currentMessage = this.messages[i];
-        const dist = differenceInMinutes(new Date(currentMessage.date), new Date(lastMessage.date));
+        const dist = differenceInMinutes(
+          new Date(currentMessage.date),
+          new Date(lastMessage.date),
+        );
         if (dist <= this.talkTimeout) {
           currentTalk.push(currentMessage);
         } else {
@@ -206,10 +211,16 @@ export default {
       return this.otherMessages.map(this.messageToTextMessage);
     },
     myText() {
-      return this.myTextMessages.map(m => m.text).filter(Boolean).join('\n');
+      return this.myTextMessages
+        .map(m => m.text)
+        .filter(Boolean)
+        .join('\n');
     },
     otherText() {
-      return this.otherTextMessages.map(m => m.text).filter(Boolean).join('\n');
+      return this.otherTextMessages
+        .map(m => m.text)
+        .filter(Boolean)
+        .join('\n');
     },
     haHaLengthBalance() {
       const mymatch = this.myText.match(/[AXАХхaax]{2,}/g);
@@ -222,20 +233,31 @@ export default {
       return this.chat ? this.chat().name : 'Other';
     },
     messageCountBallance() {
-      const myCount = this.messages.reduce((sum, m) => (m.my ? sum + 1 : sum), 0);
+      const myCount = this.messages.reduce(
+        (sum, m) => (m.my ? sum + 1 : sum),
+        0,
+      );
       const otherCount = this.messages.length - myCount;
       return this.getBalance(myCount, otherCount);
     },
     messageTextLengthBallance() {
       const my = this.myTextMessages.reduce((sum, m) => sum + m.text.length, 0);
-      const other = this.otherTextMessages.reduce((sum, m) => sum + m.text.length, 0);
-      return this.getBalance(
-        my,
-        other,
+      const other = this.otherTextMessages.reduce(
+        (sum, m) => sum + m.text.length,
+        0,
       );
+      return this.getBalance(my, other);
     },
   },
   watch: {
+    dateBounds: {
+      deep: true,
+      immediate: true,
+      handler(dateBounds) {
+        console.log({ dateBounds });
+        this.dateRange = [...dateBounds];
+      },
+    },
     fastTalkTimeout: {
       handler: debounce(function handler(fastTalkTimeout) {
         this.onTalkTimeoutInput(fastTalkTimeout);
@@ -244,25 +266,33 @@ export default {
   },
   methods: {
     filters() {
-      const [minYear, maxYear] = this.yearRange;
+      const [minDate, maxDate] = this.dateRange;
+
       return (message) => {
-        const messageYear = new Date(message.date).getFullYear();
-        return minYear <= messageYear && messageYear <= maxYear;
+        const date = new Date(message.date);
+        return date - minDate > 0 && maxDate - date > 0;
       };
     },
     onTalkTimeoutInput: debounce(function onTalkTimeoutInput(value) {
       this.talkTimeout = value;
     }, 1000),
     getLetterBalance(theLetter) {
-      const my = this.myText.split('').reduce((sum, letter) => (letter === theLetter ? sum + 1 : sum), 0);
-      const other = this.otherText.split('').reduce((sum, letter) => (letter === theLetter ? sum + 1 : sum), 0);
+      const my = this.myText
+        .split('')
+        .reduce((sum, letter) => (letter === theLetter ? sum + 1 : sum), 0);
+      const other = this.otherText
+        .split('')
+        .reduce((sum, letter) => (letter === theLetter ? sum + 1 : sum), 0);
       return this.getBalance(my, other);
     },
     messageToTextMessage(message) {
       return {
         ...message,
         _text: message.text,
-        text: message.text.filter(textElement => textElement.type === 'textMessage').map(textElement => textElement.text).join('\n'),
+        text: message.text
+          .filter(textElement => textElement.type === 'textMessage')
+          .map(textElement => textElement.text)
+          .join('\n'),
       };
     },
     getBalance(my, other) {
@@ -278,6 +308,10 @@ export default {
 <style lang="scss" scoped>
 .chat-balance-charts-wrapper {
   width: 500px;
+}
+
+.el-input__inner {
+  width: 100%;
 }
 
 h4 {
