@@ -154,11 +154,13 @@ export default {
       margin-left: 30px;
 
       .menu-item {
+        font-weight: bold;
         margin-left: 15px;
       }
     }
 
     .hidden-item {
+      font-weight: bold;
       display: block;
       margin-left: 5px;
       width: 200px;
