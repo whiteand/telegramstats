@@ -106,7 +106,7 @@
 <script>
 import HorizontalBarChart from '@/components/HorizontalBarChart.vue';
 import { differenceInSeconds, differenceInMinutes } from 'date-fns';
-import median from 'median';
+import { getMedianOfDelay } from '@/utils';
 import { debounce } from 'lodash';
 
 export default {
@@ -140,6 +140,12 @@ export default {
     },
     notFilteredMessages() {
       return this.chat ? this.chat().messages : [];
+    },
+    myId() {
+      return this.chat ? this.chat().myId : null;
+    },
+    otherId() {
+      return this.chat ? this.chat().otherId : null;
     },
     messages() {
       return this.notFilteredMessages.filter(this.filters());
@@ -210,8 +216,9 @@ export default {
       return res;
     },
     medianResponseBalance() {
-      const my = median(this.myTimeToResponse);
-      const other = median(this.otherTimeToResponse);
+      if (!this.myId || !this.otherId) return this.getBalance(0, 0);
+      const my = getMedianOfDelay(this.messages, this.myId);
+      const other = getMedianOfDelay(this.messages, this.otherId);
       return this.getBalance(my, other);
     },
     myMessages() {

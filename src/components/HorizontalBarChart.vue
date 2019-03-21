@@ -17,7 +17,7 @@
           class="percentage-chart_bar"
           :style="`
             height: ${height};
-            width: ${item.value / fullValue * 100}%;
+            width: ${getBarWidth(item)}%;
             background-color: ${barcolor}
           `.trim()"
         />
@@ -59,6 +59,10 @@ export default {
       type: String,
       default: '50px',
     },
+    isMaxValueFullWidth: {
+      type: Boolean,
+      default: false,
+    },
     bgcolor: {
       type: String,
       default: 'rgb(23, 33, 43)',
@@ -75,7 +79,7 @@ export default {
   computed: {
     renderedItems() {
       return this.items.map(item => ({
-        caption: item[this.captionProp] || 'unknown',
+        caption: item[this.captionProp] === undefined ? 'unknown' : item[this.captionProp],
         value: item[this.valueProp] || 0,
       })).filter(item => Number.isFinite(item.value));
     },
@@ -94,6 +98,11 @@ export default {
     getPercentage({ value }) {
       if (!value) return '0';
       return (value / this.fullValue * 100).toFixed(0);
+    },
+    getBarWidth({ value }) {
+      return this.isMaxValueFullWidth
+        ? value / this.maxValue * 100
+        : value / this.fullValue * 100;
     },
   },
 };

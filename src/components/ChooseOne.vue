@@ -62,19 +62,20 @@ export default {
 .choose-one-wrapper {
   display: flex;
   justify-content: space-around;
-  background-color: $main;
+  background-color: $complement;
+  padding: 10px 0;
 }
 
 .choose-one-item {
-  color: $complement;
+  color: $main;
   cursor: pointer;
-  padding: 0 10px;
+  padding: 5px 10px;
   font-size: 1rem;
 
   &.chosen {
     font-weight: bold;
     color: $accent;
-    background-color: $complement;
+    background-color: $main;
   }
 }
 </style>

@@ -34,17 +34,19 @@
             </div>
           </div>
         </el-collapse-item>
-        <el-collapse-item
-          class="bg-color-main"
-          title="Статистика чата"
-          name="chatBalance"
-        >
-          <h3>Choose chat</h3>
-          <ChooseOne
-            v-model="selectedChatId"
-            :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
-          />
-          <template v-if="selectedChatId">
+        <h3 class="bg-color-complement color-main">
+          Choose chat
+        </h3>
+        <ChooseOne
+          v-model="selectedChatId"
+          :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
+        />
+        <template v-if="selectedChatId">
+          <el-collapse-item
+            class="bg-color-main"
+            title="Статистика чата"
+            name="chatBalance"
+          >
             <div class="charts_infoblock">
               <div class="charts_infoblock-content">
                 <h3>Chat balance charts:</h3>
@@ -62,8 +64,18 @@
                 />
               </div>
             </div>
-          </template>
-        </el-collapse-item>
+          </el-collapse-item>
+
+          <el-collapse-item
+            class="bg-color-main"
+            title="Графики времени"
+            name="chatTimeCharts"
+          >
+            <ChatTimeCharts
+              :chat="() => getChatById(selectedChatId)"
+            />
+          </el-collapse-item>
+        </template>
       </el-collapse>
     </div>
     <div
@@ -84,6 +96,7 @@ import ChooseOne from '@/components/ChooseOne.vue';
 import LastMessages from '@/components/LastMessages.vue';
 import MessageCount from '@/components/MessageCount.vue';
 import ChatBalanceCharts from '@/components/ChatBalanceCharts.vue';
+import ChatTimeCharts from '@/components/ChatTimeCharts.vue';
 import { scroller } from 'vue-scrollto/src/scrollTo';
 import { mapGetters, mapState } from 'vuex';
 
@@ -94,6 +107,7 @@ export default {
   components: {
     Header,
     ChooseOne,
+    ChatTimeCharts,
     MainFooter,
     MessageCount,
     LastMessages,
@@ -164,7 +178,8 @@ export default {
 }
 
 .el-collapse-item__content {
-  padding-bottom: 0;
+  background-color: $main;
+  color: $complement;
 }
 
 h3 {

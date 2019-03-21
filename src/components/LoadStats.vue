@@ -109,12 +109,22 @@ const deserializePersonalInformation = info => ({
   username: info.username || null,
 });
 
-const deserializeChat = personalInformation => chat => ({
-  ...chat,
-  id: chat.id.toString(),
-  name: chat.name || 'UnknownChat',
-  messages: chat.messages ? chat.messages.map(deserializeMessage(personalInformation)) : [],
-});
+const deserializeChat = personalInformation => (chat) => {
+  const messages = chat.messages ? chat.messages.map(deserializeMessage(personalInformation)) : [];
+  let otherId = null;
+  const firstOtherMessage = messages.find(m => m.fromId !== personalInformation.user_id);
+  if (firstOtherMessage) {
+    otherId = firstOtherMessage.fromId;
+  }
+  return {
+    ...chat,
+    id: chat.id.toString(),
+    myId: personalInformation.user_id,
+    otherId,
+    name: chat.name || 'UnknownChat',
+    messages,
+  };
+};
 
 const deserialize = (data) => {
   const { chats, personal_information: personalInformation } = data;
