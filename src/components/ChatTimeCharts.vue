@@ -14,6 +14,26 @@
         start-placeholder="Start date"
         end-placeholder="End date"
       />
+      <div class="chat-time-charts_time-control-buttons">
+        <button @click="moveRange(-365)">
+          &lt;&lt;&lt;
+        </button>
+        <button @click="moveRange(-31)">
+          &lt;&lt;
+        </button>
+        <button @click="moveRange(-7)">
+          &lt;
+        </button>
+        <button @click="moveRange(7)">
+          &gt;
+        </button>
+        <button @click="moveRange(31)">
+          &gt;&gt;
+        </button>
+        <button @click="moveRange(365)">
+          &gt;&gt;&gt;
+        </button>
+      </div>
       <h4>Сообщений в указанный период: {{ filteredMessages.length }}</h4>
     </div>
     <div>
@@ -47,7 +67,9 @@ import { getMyIdFromChat, getOtherIdFromChat } from '@/utils';
 import HorizontalBarChart from '@/components/HorizontalBarChart.vue';
 import LineChart from '@/components/charts/LineChart.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
-import { startOfWeek, format, startOfMonth } from 'date-fns';
+import {
+  startOfWeek, format, startOfMonth, addDays,
+} from 'date-fns';
 
 const HOURS = [
   5, 6, 7, 8, 9, 10, 11, 12, 13,
@@ -167,6 +189,12 @@ export default {
     },
   },
   methods: {
+    moveRange(days) {
+      const [from, to] = this.dateRange;
+      const nextFrom = addDays(from, days);
+      const nextTo = addDays(to, days);
+      this.dateRange = [nextFrom, nextTo];
+    },
     getLineChartData(distribution, label = 'Hours distribution') {
       return {
         labels: distribution.map(({ caption }) => caption),
