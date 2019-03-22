@@ -361,8 +361,12 @@ export default {
         const my = getMedianOfDelay(messages, myId);
         return getRelation(my, other);
       };
+      const filterRes = (distribution) => {
+        const LIMIT = 10 * median(distribution.map(e => e.value));
+        return distribution.filter(e => e.value < LIMIT);
+      };
       return this.getValueDistributionAroundDate({
-        getValue, range: this.clusterRange, step: this.clusterStep,
+        getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
       });
     },
   },
