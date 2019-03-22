@@ -16,49 +16,28 @@
       />
       <h4>Сообщений в указанный период: {{ filteredMessages.length }}</h4>
     </div>
+    <div>
+      <ChooseOne
+        v-model="messageCountDistributionChoise"
+        :items="messageCountDistributionChoiseItems()"
+      />
+    </div>
     <div class="chat-time-charts_main-hours-distribution">
       <h4>Распределение всех сообщений по часам</h4>
-      <HorizontalBarChart
-        is-max-value-full-width
-        class="chat-balance_chart"
-        :items="mainDistribution"
-        height="1.5rem"
+      <LineChart
+        :chart-data="hoursDistributionChartData"
       />
     </div>
     <div class="chat-time-charts_main-hours-distribution">
       <h4>Распределение всех сообщений по неделям</h4>
-      <HorizontalBarChart
-        is-max-value-full-width
-        class="chat-balance_chart"
-        :items="weekDistribution"
-        height="1.5rem"
+      <LineChart
+        :chart-data="weekDistributionChartData"
       />
     </div>
     <div class="chat-time-charts_main-hours-distribution">
       <h4>Распределение всех сообщений по месяцам</h4>
-      <HorizontalBarChart
-        is-max-value-full-width
-        class="chat-balance_chart"
-        :items="monthDistribution"
-        height="1.5rem"
-      />
-    </div>
-    <div class="chat-time-charts_main-hours-distribution">
-      <h4>Распределение моих сообщений по часам</h4>
-      <HorizontalBarChart
-        is-max-value-full-width
-        class="chat-balance_chart"
-        :items="myDistribution"
-        height="1.5rem"
-      />
-    </div>
-    <div class="chat-time-charts_main-hours-distribution">
-      <h4>Распределение {{ chatName }}</h4>
-      <HorizontalBarChart
-        is-max-value-full-width
-        class="chat-balance_chart"
-        :items="otherDistribution"
-        height="1.5rem"
+      <LineChart
+        :chart-data="getLineChartData(monthDistribution, 'Month distribution')"
       />
     </div>
   </div>
@@ -66,6 +45,8 @@
 <script>
 import { getMyIdFromChat, getOtherIdFromChat } from '@/utils';
 import HorizontalBarChart from '@/components/HorizontalBarChart.vue';
+import LineChart from '@/components/charts/LineChart.vue';
+import ChooseOne from '@/components/ChooseOne.vue';
 import { startOfWeek, format, startOfMonth } from 'date-fns';
 
 const HOURS = [
@@ -74,9 +55,17 @@ const HOURS = [
   22, 23, 0, 1, 2, 3, 4,
 ];
 
+const CHART_TYPE = {
+  FULL: 'full',
+  MY: 'my',
+  OTHER: 'other',
+};
+
 export default {
   components: {
+    ChooseOne,
     HorizontalBarChart,
+    LineChart,
   },
   props: {
     chat: {
@@ -87,6 +76,7 @@ export default {
   data() {
     return {
       dateRange: [Date.now(), Date.now() + 1],
+      messageCountDistributionChoise: CHART_TYPE.FULL,
     };
   },
   computed: {
@@ -106,13 +96,15 @@ export default {
     messages() {
       return this.chat ? this.chat().messages : [];
     },
-    mainDistribution() {
-      return this.getMessageDistribution({});
+    hoursDistribution() {
+      switch (this.messageCountDistributionChoise) {
+        case CHART_TYPE.MY: return this.myDistribution();
+        case CHART_TYPE.OTHER: return this.otherDistribution();
+        default: return this.mainDistribution();
+      }
     },
-    myDistribution() {
-      return this.getMessageDistribution({
-        filter: m => m.my,
-      });
+    hoursDistributionChartData() {
+      return this.getLineChartData(this.hoursDistribution);
     },
     weekDistribution() {
       const messages = this.filteredMessages;
@@ -133,6 +125,9 @@ export default {
       }
       return res;
     },
+    weekDistributionChartData() {
+      return this.getLineChartData(this.weekDistribution, 'Week distribution');
+    },
     monthDistribution() {
       const messages = this.filteredMessages;
       let lastKey = '1970-0';
@@ -141,7 +136,7 @@ export default {
         const message = messages[i];
         const date = new Date(message.date);
         const currentWeek = startOfMonth(date);
-        const key = format(currentWeek, 'MM/YYYY');
+        const key = format(currentWeek, 'MMM, YYYY');
         if (key === lastKey) {
           res[res.length - 1].value += 1;
         } else {
@@ -151,11 +146,6 @@ export default {
         }
       }
       return res;
-    },
-    otherDistribution() {
-      return this.getMessageDistribution({
-        filter: m => !m.my,
-      });
     },
     myId() {
       return getMyIdFromChat(this.chat);
@@ -177,6 +167,37 @@ export default {
     },
   },
   methods: {
+    getLineChartData(distribution, label = 'Hours distribution') {
+      return {
+        labels: distribution.map(({ caption }) => caption),
+        datasets: [{
+          data: distribution.map(({ caption, value }) => ({ x: caption, y: value })),
+          pointBackgroundColor: 'rgb(43, 82, 120)',
+          label,
+          backgroundColor: '#dddfd4',
+        }],
+      };
+    },
+    mainDistribution() {
+      return this.getHoursDistribution({});
+    },
+    myDistribution() {
+      return this.getHoursDistribution({
+        filter: m => m.my,
+      });
+    },
+    otherDistribution() {
+      return this.getHoursDistribution({
+        filter: m => !m.my,
+      });
+    },
+    messageCountDistributionChoiseItems() {
+      return [
+        { caption: 'Общее распределение', value: CHART_TYPE.FULL },
+        { caption: 'Мои сообщения', value: CHART_TYPE.MY },
+        { caption: 'Сообщения собеседника', value: CHART_TYPE.OTHER },
+      ];
+    },
     filters() {
       const [minDate, maxDate] = this.dateRange;
 
@@ -185,10 +206,9 @@ export default {
         return date - minDate > 0 && maxDate - date > 0;
       };
     },
-    getMessageDistribution({
+    getHoursDistribution({
       filter = () => true,
       groupBy = message => new Date(message.date).getHours(),
-      order = (a, b) => HOURS.indexOf(a.caption) - HOURS.indexOf(b.caption),
       getValue = (message, oldValue) => (oldValue || 0) + 1,
     }) {
       const m = new Map();
@@ -200,9 +220,7 @@ export default {
 
         m.set(caption, getValue(message, m.get(caption)));
       }
-      const list = [...m].map(([caption, value]) => ({ caption, value }));
-      list.sort(order);
-      return list;
+      return HOURS.map(hour => ({ caption: hour, value: m.get(hour) || 0 }));
     },
   },
 };

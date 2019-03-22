@@ -63,12 +63,13 @@ export default {
   display: flex;
   justify-content: space-around;
   background-color: $complement;
-  padding: 10px 0;
+  padding: 10px;
 }
 
 .choose-one-item {
   color: $main;
   cursor: pointer;
+  margin: 5px;
   padding: 5px 10px;
   font-size: 1rem;
 
