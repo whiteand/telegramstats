@@ -1,6 +1,5 @@
 <script>
 import { Line, mixins } from 'vue-chartjs';
-import { clone } from 'ramda';
 
 const { reactiveProp } = mixins;
 
@@ -14,7 +13,11 @@ export default {
     },
     options: {
       type: Object,
-      default: null,
+      default: () => ({
+        animation: {
+          duration: 300,
+        },
+      }),
     },
   },
   mounted() {

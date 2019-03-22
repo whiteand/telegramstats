@@ -38,28 +38,52 @@
     </div>
     <div>
       <ChooseOne
-        v-model="messageCountDistributionChoise"
-        :items="messageCountDistributionChoiseItems()"
+        v-model="currentChart"
+        :items="chartItems"
       />
     </div>
-    <div class="chat-time-charts_main-hours-distribution">
-      <h4>Распределение всех сообщений по часам</h4>
-      <LineChart
-        :chart-data="hoursDistributionChartData"
-      />
-    </div>
-    <div class="chat-time-charts_main-hours-distribution">
-      <h4>Распределение всех сообщений по неделям</h4>
-      <LineChart
-        :chart-data="weekDistributionChartData"
-      />
-    </div>
-    <div class="chat-time-charts_main-hours-distribution">
-      <h4>Распределение всех сообщений по месяцам</h4>
-      <LineChart
-        :chart-data="getLineChartData('Month distribution', monthDistribution)"
-      />
-    </div>
+
+
+    <template v-if="currentChart === CHART.HOURS_DISTRIBUTION">
+      <div>
+        <ChooseOne
+          v-model="messageCountDistributionChoise"
+          :items="messageCountDistributionChoiseItems()"
+        />
+      </div>
+      <div class="chat-time-charts_main-hours-distribution">
+        <h4>Распределение всех сообщений по часам</h4>
+        <LineChart
+          :chart-data="hoursDistributionChartData"
+        />
+      </div>
+    </template>
+    <template v-if="currentChart === CHART.DAY_OF_WEEK_DISTRIBUTION">
+      <div class="chat-time-charts_main-day-of-week-distribution">
+        <h4>Распределение всех сообщений по дням недели</h4>
+        <LineChart
+          :chart-data="dayOfWeekDistributionChartData"
+        />
+      </div>
+    </template>
+    <template v-if="currentChart === CHART.WEEK_DISTRIBUTION">
+      <div class="chat-time-charts_week-distribution">
+        <h4>Распределение всех сообщений по неделям</h4>
+        <LineChart
+          :chart-data="weekDistributionChartData"
+        />
+      </div>
+    </template>
+    <template v-if="currentChart === CHART.MONTH_DISTRIBUTION">
+      <div class="chat-time-charts_main-month-distribution">
+        <h4>Распределение всех сообщений по месяцам</h4>
+        <LineChart
+          :chart-data="getLineChartData('Month distribution', monthDistribution)"
+        />
+      </div>
+    </template>
+  </div>
+</template>
   </div>
 </template>
 <script>
@@ -67,7 +91,7 @@ import { getMyIdFromChat, getOtherIdFromChat } from '@/utils';
 import LineChart from '@/components/charts/LineChart.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
 import {
-  startOfWeek, format, startOfMonth, addDays,
+  startOfWeek, format, startOfMonth, addDays, getDay,
 } from 'date-fns';
 
 const HOURS = [
@@ -75,6 +99,20 @@ const HOURS = [
   14, 15, 16, 17, 18, 19, 20, 21,
   22, 23, 0, 1, 2, 3, 4,
 ];
+
+const CHART = {
+  HOURS_DISTRIBUTION: 'HOURS_DISTRIBUTION',
+  DAY_OF_WEEK_DISTRIBUTION: 'DAY_OF_WEEK_DISTRIBUTION',
+  WEEK_DISTRIBUTION: 'WEEK_DISTRIBUTION',
+  MONTH_DISTRIBUTION: 'MONTH_DISTRIBUTION',
+};
+
+const CHART_CAPTIONS = {
+  [CHART.HOURS_DISTRIBUTION]: 'По часам',
+  [CHART.DAY_OF_WEEK_DISTRIBUTION]: 'По дням недели',
+  [CHART.WEEK_DISTRIBUTION]: 'По неделям',
+  [CHART.MONTH_DISTRIBUTION]: 'По месяцам',
+};
 
 const CHART_TYPE = {
   FULL: 'full',
@@ -95,11 +133,24 @@ export default {
   },
   data() {
     return {
+      currentChart: CHART.HOURS_DISTRIBUTION,
       dateRange: [Date.now(), Date.now() + 1],
       messageCountDistributionChoise: CHART_TYPE.FULL,
     };
   },
   computed: {
+    CHART() { return CHART; },
+    chartItems() {
+      return [
+        CHART.HOURS_DISTRIBUTION,
+        CHART.DAY_OF_WEEK_DISTRIBUTION,
+        CHART.WEEK_DISTRIBUTION,
+        CHART.MONTH_DISTRIBUTION,
+      ].map(chart => ({
+        value: chart,
+        caption: CHART_CAPTIONS[chart],
+      }));
+    },
     dateBounds() {
       return this.messages.length
         ? [
@@ -166,6 +217,30 @@ export default {
         }
       }
       return res;
+    },
+    dayOfWeekDistributionChartData() {
+      const dict = {};
+      const messages = this.filteredMessages;
+      for (let i = 0; i < messages.length; i += 1) {
+        const message = messages[i];
+        const date = new Date(message.date);
+        const dayOfWeek = getDay(date);
+        dict[dayOfWeek] = (dict[dayOfWeek] || 0) + 1;
+      }
+      const DAYS = {
+        0: 'Воскресение',
+        1: 'Понедельник',
+        2: 'Вторник',
+        3: 'Среда',
+        4: 'Четверг',
+        5: 'Пятница',
+        6: 'Суббота',
+      };
+      const distribution = [1, 2, 3, 4, 5, 6, 0].map(dayOfWeek => ({
+        caption: DAYS[dayOfWeek],
+        value: dict[dayOfWeek],
+      }));
+      return this.getLineChartData('Распределение по дням недели', distribution);
     },
     myId() {
       return getMyIdFromChat(this.chat);
