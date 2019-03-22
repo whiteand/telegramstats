@@ -125,7 +125,12 @@
         />
       </div>
     </template>
-    <template v-if="currentChart === CHART.RESPONSE_TIME && currentChartType === CHART_TYPE.RELATIVE">
+    <template
+      v-if="
+        currentChart === CHART.RESPONSE_TIME
+          && currentChartType === CHART_TYPE.RELATIVE
+      "
+    >
       <div class="chat-time-charts_response-time">
         <LineChart
           :chart-data="relativeMedianResponseTimeChartData"
@@ -391,7 +396,11 @@ export default {
         { caption: 'Сообщения собеседника', value: CHART_TYPE.OTHER },
         { caption: 'Относительно', value: CHART_TYPE.RELATIVE },
       ];
-      return res.filter(({ value: chartType }) => HAS_CHART_TYPES[this.currentChart].includes(chartType));
+      const isAvailable = ({ value: chartType }) => {
+        const availableTypes = HAS_CHART_TYPES[this.currentChart];
+        return availableTypes.includes(chartType);
+      };
+      return res.filter(isAvailable);
     },
   },
   watch: {
