@@ -49,15 +49,13 @@
         />
       </el-select>
     </div>
-
-
-    <template v-if="currentChart === CHART.HOURS_DISTRIBUTION">
-      <div>
-        <ChooseOne
-          v-model="messageCountDistributionChoise"
-          :items="messageCountDistributionChoiseItems()"
-        />
-      </div>
+    <div>
+      <ChooseOne
+        v-model="currentChartType"
+        :items="currentChartTypeItems"
+      />
+    </div>
+    <template v-if="[CHART.HOURS_DISTRIBUTION].includes(currentChart)">
       <div class="chat-time-charts_main-hours-distribution">
         <h4>Распределение всех сообщений по часам</h4>
         <LineChart
@@ -91,9 +89,9 @@
     </template>
     <template
       v-if="[
-        CHART.MY_MEDIAN_RESPONSE_TIME,
-        CHART.OTHER_MEDIAN_RESPONSE_TIME,
-        CHART.RELATIVE_MEDIAN_RESPONSE_TIME
+        CHART.RESPONSE_TIME,
+        CHART.HAPPY_SMILE_COUNT,
+        CHART.BAD_SMILE_COUNT
       ].includes(currentChart)"
     >
       <div>
@@ -112,7 +110,7 @@
         />
       </div>
     </template>
-    <template v-if="currentChart === CHART.MY_MEDIAN_RESPONSE_TIME">
+    <template v-if="currentChart === CHART.RESPONSE_TIME && currentChartType === CHART_TYPE.MY">
       <div class="chat-time-charts_response-time">
         <h4>Распределение моей скорости ответа ответа</h4>
         <LineChart
@@ -120,17 +118,31 @@
         />
       </div>
     </template>
-    <template v-if="currentChart === CHART.OTHER_MEDIAN_RESPONSE_TIME">
+    <template v-if="currentChart === CHART.RESPONSE_TIME && currentChartType === CHART_TYPE.OTHER">
       <div class="chat-time-charts_response-time">
         <LineChart
           :chart-data="otherResponseTimeMedianChartData"
         />
       </div>
     </template>
-    <template v-if="currentChart === CHART.RELATIVE_MEDIAN_RESPONSE_TIME">
+    <template v-if="currentChart === CHART.RESPONSE_TIME && currentChartType === CHART_TYPE.RELATIVE">
       <div class="chat-time-charts_response-time">
         <LineChart
           :chart-data="relativeMedianResponseTimeChartData"
+        />
+      </div>
+    </template>
+    <template v-if="currentChart === CHART.HAPPY_SMILE_COUNT">
+      <div class="chat-time-charts_response-time">
+        <LineChart
+          :chart-data="happySmileCountDistributionChartData"
+        />
+      </div>
+    </template>
+    <template v-if="currentChart === CHART.BAD_SMILE_COUNT">
+      <div class="chat-time-charts_response-time">
+        <LineChart
+          :chart-data="badSmileCountDistributionChartData"
         />
       </div>
     </template>
@@ -156,9 +168,9 @@ const CHART = {
   DAY_OF_WEEK_DISTRIBUTION: 'DAY_OF_WEEK_DISTRIBUTION',
   WEEK_DISTRIBUTION: 'WEEK_DISTRIBUTION',
   MONTH_DISTRIBUTION: 'MONTH_DISTRIBUTION',
-  MY_MEDIAN_RESPONSE_TIME: 'MY_MEDIAN_RESPONSE_TIME',
-  OTHER_MEDIAN_RESPONSE_TIME: 'OTHER_MEDIAN_RESPONSE_TIME',
-  RELATIVE_MEDIAN_RESPONSE_TIME: 'RELATIVE_MEDIAN_RESPONSE_TIME',
+  RESPONSE_TIME: 'RESPONSE_TIME',
+  HAPPY_SMILE_COUNT: 'HAPPY_SMILE_COUNT',
+  BAD_SMILE_COUNT: 'BAD_SMILE_COUNT',
 };
 
 const CHART_CAPTIONS = {
@@ -166,15 +178,26 @@ const CHART_CAPTIONS = {
   [CHART.DAY_OF_WEEK_DISTRIBUTION]: 'По дням недели',
   [CHART.WEEK_DISTRIBUTION]: 'По неделям',
   [CHART.MONTH_DISTRIBUTION]: 'По месяцам',
-  [CHART.MY_MEDIAN_RESPONSE_TIME]: 'Моя скорость ответа',
-  [CHART.OTHER_MEDIAN_RESPONSE_TIME]: 'Скорость ответа собеседника',
-  [CHART.RELATIVE_MEDIAN_RESPONSE_TIME]: 'Отн. скорость',
+  [CHART.RESPONSE_TIME]: 'Медиана времени отклика',
+  [CHART.HAPPY_SMILE_COUNT]: 'Кол-во смайлов )',
+  [CHART.BAD_SMILE_COUNT]: 'Кол-во смайлов (',
 };
 
 const CHART_TYPE = {
   FULL: 'full',
   MY: 'my',
   OTHER: 'other',
+  RELATIVE: 'relative',
+};
+
+const HAS_CHART_TYPES = {
+  [CHART.HOURS_DISTRIBUTION]: [CHART_TYPE.FULL, CHART_TYPE.MY, CHART_TYPE.OTHER],
+  [CHART.DAY_OF_WEEK_DISTRIBUTION]: [CHART_TYPE.FULL],
+  [CHART.WEEK_DISTRIBUTION]: [CHART_TYPE.FULL],
+  [CHART.MONTH_DISTRIBUTION]: [CHART_TYPE.FULL],
+  [CHART.RESPONSE_TIME]: [CHART_TYPE.MY, CHART_TYPE.OTHER, CHART_TYPE.RELATIVE],
+  [CHART.HAPPY_SMILE_COUNT]: [CHART_TYPE.FULL, CHART_TYPE.MY, CHART_TYPE.OTHER],
+  [CHART.BAD_SMILE_COUNT]: [CHART_TYPE.FULL, CHART_TYPE.MY, CHART_TYPE.OTHER],
 };
 
 export default {
@@ -190,15 +213,17 @@ export default {
   },
   data() {
     return {
-      clusterRange: 5,
-      clusterStep: 15,
+      clusterRange: 31,
+      clusterStep: 7,
       currentChart: CHART.HOURS_DISTRIBUTION,
       dateRange: [Date.now(), Date.now() + 1],
-      messageCountDistributionChoise: CHART_TYPE.FULL,
+      currentChartType: CHART_TYPE.FULL,
     };
   },
   computed: {
     CHART() { return CHART; },
+    CHART_TYPE() { return CHART_TYPE; },
+    HAS_CHART_TYPES() { return HAS_CHART_TYPES; },
     chartItems() {
       return Object.values(CHART).map(chart => ({
         value: chart,
@@ -222,7 +247,7 @@ export default {
       return this.chat ? this.chat().messages : [];
     },
     hoursDistribution() {
-      switch (this.messageCountDistributionChoise) {
+      switch (this.currentChartType) {
         case CHART_TYPE.MY: return this.myDistribution();
         case CHART_TYPE.OTHER: return this.otherDistribution();
         default: return this.mainDistribution();
@@ -329,7 +354,7 @@ export default {
         return distribution.filter(e => e.value < LIMIT);
       };
       return this.getValueDistributionAroundDate({
-        getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
+        getValue, range: this.clusterRange, step: this.clusterStep, filterRes, title: 'Медиана времени моего отклика',
       });
     },
     otherResponseTimeMedianChartData() {
@@ -346,8 +371,14 @@ export default {
       };
 
       return this.getValueDistributionAroundDate({
-        getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
+        getValue, range: this.clusterRange, step: this.clusterStep, filterRes, title: `Медиана времени отклика ${this.chatName}`,
       });
+    },
+    happySmileCountDistributionChartData() {
+      return this.getWordCountDistribution(')');
+    },
+    badSmileCountDistributionChartData() {
+      return this.getWordCountDistribution('(');
     },
     relativeMedianResponseTimeChartData() {
       const { otherId, myId } = this;
@@ -371,6 +402,15 @@ export default {
         getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
       });
     },
+    currentChartTypeItems() {
+      const res = [
+        { caption: 'Общее распределение', value: CHART_TYPE.FULL },
+        { caption: 'Мои сообщения', value: CHART_TYPE.MY },
+        { caption: 'Сообщения собеседника', value: CHART_TYPE.OTHER },
+        { caption: 'Относительно', value: CHART_TYPE.RELATIVE },
+      ];
+      return res.filter(({ value: chartType }) => HAS_CHART_TYPES[this.currentChart].includes(chartType));
+    },
   },
   watch: {
     dateBounds: {
@@ -380,14 +420,42 @@ export default {
         this.dateRange = [...dateBounds];
       },
     },
+    currentChart(chart) {
+      this.currentChartType = HAS_CHART_TYPES[chart] ? HAS_CHART_TYPES[chart][0] : CHART_TYPE.FULL;
+    },
   },
   methods: {
+    getWordCountDistribution(word) {
+      const reduceToWordCount = (count, m) => m.textValue.split(word).length - 1 + count;
+      const getValue = messages => messages.reduce(reduceToWordCount, 0);
+      const filterRes = (distribution) => {
+        const LIMIT = 10 * median(distribution.map(e => e.value));
+        return distribution.filter(e => e.value < LIMIT);
+      };
+
+      const SELECTED_USER_ID = {
+        [CHART_TYPE.FULL]: [this.myId, this.otherId],
+        [CHART_TYPE.MY]: [this.myId],
+        [CHART_TYPE.OTHER]: [this.otherId],
+      };
+
+      const isChosenMessage = m => SELECTED_USER_ID[this.currentChartType].includes(m.fromId);
+
+      return this.getValueDistributionAroundDate({
+        messages: this.filteredMessages.filter(isChosenMessage),
+        getValue,
+        range: this.clusterRange,
+        step: this.clusterStep,
+        filterRes,
+        title: 'Кол-во смайликов',
+      });
+    },
     getValueDistributionAroundDate({
+      messages = this.filteredMessages,
       range = 7, getValue, step = 2, title = 'Distribution', filterRes = d => d,
     }) {
       const [from, to] = this.dateRange;
       const dict = {};
-      const messages = this.filteredMessages;
       const toKeyOfDate = date => format(date, 'DD.MM.YYYY');
       const getKeys = (date) => {
         // eslint-disable-next-line
@@ -470,13 +538,6 @@ export default {
       return this.getHoursDistribution({
         filter: m => !m.my,
       });
-    },
-    messageCountDistributionChoiseItems() {
-      return [
-        { caption: 'Общее распределение', value: CHART_TYPE.FULL },
-        { caption: 'Мои сообщения', value: CHART_TYPE.MY },
-        { caption: 'Сообщения собеседника', value: CHART_TYPE.OTHER },
-      ];
     },
     filters() {
       const [minDate, maxDate] = this.dateRange;
