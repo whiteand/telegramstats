@@ -84,8 +84,6 @@
     </template>
   </div>
 </template>
-  </div>
-</template>
 <script>
 import { getMyIdFromChat, getOtherIdFromChat } from '@/utils';
 import LineChart from '@/components/charts/LineChart.vue';
