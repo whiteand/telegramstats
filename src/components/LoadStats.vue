@@ -114,12 +114,12 @@ const deserializeChat = personalInformation => (chat) => {
   let otherId = null;
   const firstOtherMessage = messages.find(m => m.fromId !== personalInformation.user_id);
   if (firstOtherMessage) {
-    otherId = firstOtherMessage.fromId;
+    otherId = firstOtherMessage.fromId.toString();
   }
   return {
     ...chat,
     id: chat.id.toString(),
-    myId: personalInformation.user_id,
+    myId: personalInformation.user_id.toString(),
     otherId,
     name: chat.name || 'UnknownChat',
     messages,

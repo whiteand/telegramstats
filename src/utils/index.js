@@ -35,7 +35,7 @@ export const getTimeToResponse = (messages, userId) => {
     );
     res.push(secondsDist);
   }
-  return res;
+  return res.length ? res : [0];
 };
 
 export const getMedianOfDelay = (messages, id) => (messages.length > 0

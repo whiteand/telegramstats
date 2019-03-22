@@ -82,15 +82,53 @@
         />
       </div>
     </template>
+    <template
+      v-if="[
+        CHART.MY_MEDIAN_RESPONSE_TIME,
+        CHART.OTHER_MEDIAN_RESPONSE_TIME
+      ].includes(currentChart)"
+    >
+      <div>
+        <h4>Range: </h4>
+        <ChooseOne
+          v-model="clusterRange"
+          :items="rangeItems"
+        />
+      </div>
+      <div>
+        <h4>Step: </h4>
+        <ChooseOne
+          v-model="clusterStep"
+          :size="10"
+          :items="stepsItems"
+        />
+      </div>
+    </template>
+    <template v-if="currentChart === CHART.MY_MEDIAN_RESPONSE_TIME">
+      <div class="chat-time-charts_response-time">
+        <h4>Распределение моей скорости ответа ответа</h4>
+        <LineChart
+          :chart-data="myResponseTimeMedianChartData"
+        />
+      </div>
+    </template>
+    <template v-if="currentChart === CHART.OTHER_MEDIAN_RESPONSE_TIME">
+      <div class="chat-time-charts_response-time">
+        <LineChart
+          :chart-data="otherResponseTimeMedianChartData"
+        />
+      </div>
+    </template>
   </div>
 </template>
 <script>
-import { getMyIdFromChat, getOtherIdFromChat } from '@/utils';
+import { getMyIdFromChat, getOtherIdFromChat, getMedianOfDelay } from '@/utils';
 import LineChart from '@/components/charts/LineChart.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
 import {
-  startOfWeek, format, startOfMonth, addDays, getDay,
+  startOfWeek, format, startOfMonth, addDays, getDay, isBefore,
 } from 'date-fns';
+import median from 'median';
 
 const HOURS = [
   5, 6, 7, 8, 9, 10, 11, 12, 13,
@@ -103,6 +141,8 @@ const CHART = {
   DAY_OF_WEEK_DISTRIBUTION: 'DAY_OF_WEEK_DISTRIBUTION',
   WEEK_DISTRIBUTION: 'WEEK_DISTRIBUTION',
   MONTH_DISTRIBUTION: 'MONTH_DISTRIBUTION',
+  MY_MEDIAN_RESPONSE_TIME: 'MY_MEDIAN_RESPONSE_TIME',
+  OTHER_MEDIAN_RESPONSE_TIME: 'OTHER_MEDIAN_RESPONSE_TIME',
 };
 
 const CHART_CAPTIONS = {
@@ -110,6 +150,8 @@ const CHART_CAPTIONS = {
   [CHART.DAY_OF_WEEK_DISTRIBUTION]: 'По дням недели',
   [CHART.WEEK_DISTRIBUTION]: 'По неделям',
   [CHART.MONTH_DISTRIBUTION]: 'По месяцам',
+  [CHART.MY_MEDIAN_RESPONSE_TIME]: 'Моя скорость ответа',
+  [CHART.OTHER_MEDIAN_RESPONSE_TIME]: 'Скорость ответа собесденика',
 };
 
 const CHART_TYPE = {
@@ -131,6 +173,8 @@ export default {
   },
   data() {
     return {
+      clusterRange: 31,
+      clusterStep: 15,
       currentChart: CHART.HOURS_DISTRIBUTION,
       dateRange: [Date.now(), Date.now() + 1],
       messageCountDistributionChoise: CHART_TYPE.FULL,
@@ -139,12 +183,7 @@ export default {
   computed: {
     CHART() { return CHART; },
     chartItems() {
-      return [
-        CHART.HOURS_DISTRIBUTION,
-        CHART.DAY_OF_WEEK_DISTRIBUTION,
-        CHART.WEEK_DISTRIBUTION,
-        CHART.MONTH_DISTRIBUTION,
-      ].map(chart => ({
+      return Object.values(CHART).map(chart => ({
         value: chart,
         caption: CHART_CAPTIONS[chart],
       }));
@@ -216,6 +255,18 @@ export default {
       }
       return res;
     },
+    rangeItems() {
+      return Array.from({ length: 100 }, (_, i) => ({
+        caption: (i + 1).toString(),
+        value: i + 1,
+      }));
+    },
+    stepsItems() {
+      return Array.from({ length: 100 }, (_, i) => ({
+        caption: (i + 1).toString(),
+        value: i + 1,
+      }));
+    },
     dayOfWeekDistributionChartData() {
       const dict = {};
       const messages = this.filteredMessages;
@@ -249,6 +300,36 @@ export default {
     filteredMessages() {
       return this.messages.filter(this.filters());
     },
+    myResponseTimeMedianChartData() {
+      const { myId } = this;
+      const getValue = (messages) => {
+        if (messages.length === 0) return 0;
+        const res = getMedianOfDelay(messages, myId);
+        return res;
+      };
+      const filterRes = (distribution) => {
+        const LIMIT = 10 * median(distribution.map(e => e.value));
+        return distribution.filter(e => e.value < LIMIT);
+      };
+      return this.getValueDistributionAroundDate({
+        getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
+      });
+    },
+    otherResponseTimeMedianChartData() {
+      const { otherId } = this;
+      const getValue = (messages) => {
+        if (messages.length === 0) return 0;
+        const res = getMedianOfDelay(messages, otherId);
+        return res;
+      };
+      const filterRes = (distribution) => {
+        const LIMIT = 10 * median(distribution.map(e => e.value));
+        return distribution.filter(e => e.value < LIMIT);
+      };
+      return this.getValueDistributionAroundDate({
+        getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
+      });
+    },
   },
   watch: {
     dateBounds: {
@@ -260,6 +341,46 @@ export default {
     },
   },
   methods: {
+    getValueDistributionAroundDate({
+      range = 7, getValue, step = 2, title = 'Distribution', filterRes = d => d,
+    }) {
+      const [from, to] = this.dateRange;
+      const dict = {};
+      const messages = this.filteredMessages;
+      const toKeyOfDate = date => format(date, 'DD.MM.YYYY');
+      const getKeys = (date) => {
+        // eslint-disable-next-line
+        const middle = range >> 1;
+        return Array.from({ length: range }, (_, i) => toKeyOfDate(addDays(date, i - middle)));
+      };
+      for (let i = 0; i < messages.length; i += 1) {
+        const m = messages[i];
+        const date = new Date(m.date);
+        const keys = getKeys(date);
+        for (let j = 0; j < keys.length; j += 1) {
+          const key = keys[j];
+          if (dict[key]) {
+            dict[key].push(m);
+          } else {
+            dict[key] = [m];
+          }
+        }
+      }
+      const distribution = [];
+      for (let currentDate = from;
+        isBefore(currentDate, to);
+        currentDate = addDays(currentDate, step)
+      ) {
+        const key = toKeyOfDate(currentDate);
+        const currentDatePart = dict[key] || [];
+        const value = getValue(currentDatePart);
+        distribution.push({
+          value,
+          caption: key,
+        });
+      }
+      return this.getLineChartData(title, filterRes(distribution));
+    },
     moveRange(days) {
       const [from, to] = this.dateRange;
       const nextFrom = addDays(from, days);

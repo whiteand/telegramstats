@@ -23,8 +23,8 @@ export default {
       type: Array,
       default: () => [],
       validator: v.arrayOf({
-        value: 'string',
-        caption: 'string',
+        value: ['string', 'number'],
+        caption: ['string', 'number'],
       }),
     },
     value: {
