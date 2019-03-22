@@ -57,14 +57,13 @@
     <div class="chat-time-charts_main-hours-distribution">
       <h4>Распределение всех сообщений по месяцам</h4>
       <LineChart
-        :chart-data="getLineChartData(monthDistribution, 'Month distribution')"
+        :chart-data="getLineChartData('Month distribution', monthDistribution)"
       />
     </div>
   </div>
 </template>
 <script>
 import { getMyIdFromChat, getOtherIdFromChat } from '@/utils';
-import HorizontalBarChart from '@/components/HorizontalBarChart.vue';
 import LineChart from '@/components/charts/LineChart.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
 import {
@@ -86,7 +85,6 @@ const CHART_TYPE = {
 export default {
   components: {
     ChooseOne,
-    HorizontalBarChart,
     LineChart,
   },
   props: {
@@ -126,7 +124,7 @@ export default {
       }
     },
     hoursDistributionChartData() {
-      return this.getLineChartData(this.hoursDistribution);
+      return this.getLineChartData('Распределение по часам', this.hoursDistribution);
     },
     weekDistribution() {
       const messages = this.filteredMessages;
@@ -148,7 +146,7 @@ export default {
       return res;
     },
     weekDistributionChartData() {
-      return this.getLineChartData(this.weekDistribution, 'Week distribution');
+      return this.getLineChartData('Распределение по неделям', this.weekDistribution);
     },
     monthDistribution() {
       const messages = this.filteredMessages;
@@ -195,15 +193,34 @@ export default {
       const nextTo = addDays(to, days);
       this.dateRange = [nextFrom, nextTo];
     },
-    getLineChartData(distribution, label = 'Hours distribution') {
-      return {
-        labels: distribution.map(({ caption }) => caption),
-        datasets: [{
+    getLineChartData(lbl, ...distributions) {
+      const distributionToDataSetItem = (distrItem) => {
+        if (Array.isArray(distrItem)) {
+          return ({
+            data: distrItem.map(({ caption, value }) => ({ x: caption, y: value })),
+            pointBackgroundColor: 'rgb(43, 82, 120)',
+            label: lbl,
+            backgroundColor: 'rgba(221,223,212, 0.75)',
+          });
+        }
+        const {
+          distribution, label = lbl, backgroundColor = 'rgba(221,223,212, 0.75)', pointBackgroundColor = 'rgb(43, 82, 120)',
+        } = distrItem;
+        return {
           data: distribution.map(({ caption, value }) => ({ x: caption, y: value })),
-          pointBackgroundColor: 'rgb(43, 82, 120)',
           label,
-          backgroundColor: '#dddfd4',
-        }],
+          backgroundColor,
+          pointBackgroundColor,
+        };
+      };
+      const getLabels = (distrItems) => {
+        const [distrItem] = distrItems;
+        const distribution = Array.isArray(distrItem) ? distrItem : distrItem.distribution;
+        return distribution.map(({ caption }) => caption);
+      };
+      return {
+        labels: getLabels(distributions),
+        datasets: distributions.map(distributionToDataSetItem),
       };
     },
     mainDistribution() {
