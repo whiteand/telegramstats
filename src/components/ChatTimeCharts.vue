@@ -114,14 +114,14 @@
       <div class="chat-time-charts_response-time">
         <h4>Распределение моей скорости ответа ответа</h4>
         <LineChart
-          :chart-data="myResponseTimeMedianChartData"
+          :chart-data="responseTimeMedianChartData(myId)"
         />
       </div>
     </template>
     <template v-if="currentChart === CHART.RESPONSE_TIME && currentChartType === CHART_TYPE.OTHER">
       <div class="chat-time-charts_response-time">
         <LineChart
-          :chart-data="otherResponseTimeMedianChartData"
+          :chart-data="responseTimeMedianChartData(otherId)"
         />
       </div>
     </template>
@@ -342,11 +342,10 @@ export default {
     filteredMessages() {
       return this.messages.filter(this.filters());
     },
-    myResponseTimeMedianChartData() {
-      const { myId } = this;
+    responseTimeMedianChartData(id) {
       const getValue = (messages) => {
         if (messages.length === 0) return 0;
-        const res = getMedianOfDelay(messages, myId);
+        const res = getMedianOfDelay(messages, id);
         return res;
       };
       const filterRes = (distribution) => {
@@ -355,23 +354,6 @@ export default {
       };
       return this.getValueDistributionAroundDate({
         getValue, range: this.clusterRange, step: this.clusterStep, filterRes, title: 'Медиана времени моего отклика',
-      });
-    },
-    otherResponseTimeMedianChartData() {
-      const { otherId } = this;
-
-      const getValue = (messages) => {
-        if (messages.length === 0) return 0;
-        const res = getMedianOfDelay(messages, otherId);
-        return res;
-      };
-      const filterRes = (distribution) => {
-        const LIMIT = 10 * median(distribution.map(e => e.value));
-        return distribution.filter(e => e.value < LIMIT);
-      };
-
-      return this.getValueDistributionAroundDate({
-        getValue, range: this.clusterRange, step: this.clusterStep, filterRes, title: `Медиана времени отклика ${this.chatName}`,
       });
     },
     happySmileCountDistributionChartData() {
