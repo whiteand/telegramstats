@@ -55,15 +55,6 @@
                 />
               </div>
             </div>
-            <div class="charts_infoblock">
-              <div class="charts_infoblock-content">
-                <h3>Last messages</h3>
-                <LastMessages
-                  :stats="stats"
-                  :chat-id="selectedChatId"
-                />
-              </div>
-            </div>
           </el-collapse-item>
 
           <el-collapse-item
@@ -93,7 +84,6 @@
 import Header from '@/components/Header.vue';
 import MainFooter from '@/components/MainFooter.vue';
 import ChooseOne from '@/components/ChooseOne.vue';
-import LastMessages from '@/components/LastMessages.vue';
 import MessageCount from '@/components/MessageCount.vue';
 import ChatBalanceCharts from '@/components/ChatBalanceCharts.vue';
 import ChatTimeCharts from '@/components/ChatTimeCharts.vue';
@@ -110,7 +100,6 @@ export default {
     ChatTimeCharts,
     MainFooter,
     MessageCount,
-    LastMessages,
     ChatBalanceCharts,
   },
   data() {

@@ -334,6 +334,7 @@ export default {
     },
     otherResponseTimeMedianChartData() {
       const { otherId } = this;
+
       const getValue = (messages) => {
         if (messages.length === 0) return 0;
         const res = getMedianOfDelay(messages, otherId);
@@ -343,6 +344,7 @@ export default {
         const LIMIT = 10 * median(distribution.map(e => e.value));
         return distribution.filter(e => e.value < LIMIT);
       };
+
       return this.getValueDistributionAroundDate({
         getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
       });
