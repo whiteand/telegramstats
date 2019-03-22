@@ -34,13 +34,17 @@
             </div>
           </div>
         </el-collapse-item>
-        <h3 class="bg-color-complement color-main">
-          Choose chat
-        </h3>
-        <ChooseOne
-          v-model="selectedChatId"
-          :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
-        />
+        <div class="charts_choose-chat-block">
+          <h3 class="bg-color-complement color-main">
+            Choose chat
+          </h3>
+          <div class="charts_choose-chat">
+            <ChooseOne
+              v-model="selectedChatId"
+              :items="chatsInfo.map(chat => ({ value: chat.id, caption: chat.name }))"
+            />
+          </div>
+        </div>
         <template v-if="selectedChatId">
           <el-collapse-item
             class="bg-color-main"
@@ -169,6 +173,16 @@ export default {
 .el-collapse-item__content {
   background-color: $main;
   color: $complement;
+}
+
+.charts_choose-chat-block {
+  padding: 40px;
+  background: $complement;
+}
+
+.charts_choose-chat {
+  display: flex;
+  justify-content: center;
 }
 
 h3 {
