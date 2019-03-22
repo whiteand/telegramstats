@@ -112,7 +112,7 @@ const deserializePersonalInformation = info => ({
 const deserializeChat = personalInformation => (chat) => {
   const messages = chat.messages ? chat.messages.map(deserializeMessage(personalInformation)) : [];
   let otherId = null;
-  const firstOtherMessage = messages.find(m => m.fromId !== personalInformation.user_id);
+  const firstOtherMessage = messages.find(m => m.fromId !== personalInformation.user_id.toString());
   if (firstOtherMessage) {
     otherId = firstOtherMessage.fromId.toString();
   }

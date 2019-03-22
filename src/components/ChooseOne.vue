@@ -1,17 +1,15 @@
 <template>
-  <div class="choose-one-wrapper">
-    <div
-      v-for="item in itemsToShow"
+  <el-select
+    :value="value"
+    @input="value => $emit('input', value)"
+  >
+    <el-option
+      v-for="item in items"
       :key="item.value"
-      :class="[
-        'choose-one-item',
-        item.value === value ? 'chosen' : 'not-chosen'
-      ]"
-      @click="$emit('input', item.value)"
-    >
-      {{ item.caption }}
-    </div>
-  </div>
+      :label="item.caption"
+      :value="item.value"
+    />
+  </el-select>
 </template>
 
 <script>
@@ -34,22 +32,6 @@ export default {
     size: {
       type: Number,
       default: 3,
-    },
-  },
-  computed: {
-    itemsToShow() {
-      const index = this.items.findIndex(item => item.value === this.value);
-      if (index < 0) {
-        return this.items.slice(0, 2 * this.size);
-      }
-      const start = Math.max(0, index - this.size);
-      const end = start + this.size * 2;
-      return this.items.slice(start, end);
-    },
-  },
-  methods: {
-    select(item) {
-      this.$emit('input', item);
     },
   },
 };

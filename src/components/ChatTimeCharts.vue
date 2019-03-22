@@ -37,10 +37,17 @@
       <h4>Сообщений в указанный период: {{ filteredMessages.length }}</h4>
     </div>
     <div>
-      <ChooseOne
+      <el-select
         v-model="currentChart"
-        :items="chartItems"
-      />
+        placeholder="Select chart"
+      >
+        <el-option
+          v-for="item in chartItems"
+          :key="item.value"
+          :value="item.value"
+          :label="item.caption"
+        />
+      </el-select>
     </div>
 
 
@@ -85,7 +92,8 @@
     <template
       v-if="[
         CHART.MY_MEDIAN_RESPONSE_TIME,
-        CHART.OTHER_MEDIAN_RESPONSE_TIME
+        CHART.OTHER_MEDIAN_RESPONSE_TIME,
+        CHART.RELATIVE_MEDIAN_RESPONSE_TIME
       ].includes(currentChart)"
     >
       <div>
@@ -119,6 +127,13 @@
         />
       </div>
     </template>
+    <template v-if="currentChart === CHART.RELATIVE_MEDIAN_RESPONSE_TIME">
+      <div class="chat-time-charts_response-time">
+        <LineChart
+          :chart-data="relativeMedianResponseTimeChartData"
+        />
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -143,6 +158,7 @@ const CHART = {
   MONTH_DISTRIBUTION: 'MONTH_DISTRIBUTION',
   MY_MEDIAN_RESPONSE_TIME: 'MY_MEDIAN_RESPONSE_TIME',
   OTHER_MEDIAN_RESPONSE_TIME: 'OTHER_MEDIAN_RESPONSE_TIME',
+  RELATIVE_MEDIAN_RESPONSE_TIME: 'RELATIVE_MEDIAN_RESPONSE_TIME',
 };
 
 const CHART_CAPTIONS = {
@@ -151,7 +167,8 @@ const CHART_CAPTIONS = {
   [CHART.WEEK_DISTRIBUTION]: 'По неделям',
   [CHART.MONTH_DISTRIBUTION]: 'По месяцам',
   [CHART.MY_MEDIAN_RESPONSE_TIME]: 'Моя скорость ответа',
-  [CHART.OTHER_MEDIAN_RESPONSE_TIME]: 'Скорость ответа собесденика',
+  [CHART.OTHER_MEDIAN_RESPONSE_TIME]: 'Скорость ответа собеседника',
+  [CHART.RELATIVE_MEDIAN_RESPONSE_TIME]: 'Отн. скорость',
 };
 
 const CHART_TYPE = {
@@ -173,7 +190,7 @@ export default {
   },
   data() {
     return {
-      clusterRange: 31,
+      clusterRange: 5,
       clusterStep: 15,
       currentChart: CHART.HOURS_DISTRIBUTION,
       dateRange: [Date.now(), Date.now() + 1],
@@ -328,6 +345,24 @@ export default {
       };
       return this.getValueDistributionAroundDate({
         getValue, range: this.clusterRange, step: this.clusterStep, filterRes,
+      });
+    },
+    relativeMedianResponseTimeChartData() {
+      const { otherId, myId } = this;
+      const getRelation = (a, b) => {
+        if (b < 1e-8) {
+          return a < 1e-8 ? 0.5 : 1;
+        }
+        return a / b;
+      };
+      const getValue = (messages) => {
+        if (messages.length === 0) return 0;
+        const other = getMedianOfDelay(messages, otherId);
+        const my = getMedianOfDelay(messages, myId);
+        return getRelation(my, other);
+      };
+      return this.getValueDistributionAroundDate({
+        getValue, range: this.clusterRange, step: this.clusterStep,
       });
     },
   },
