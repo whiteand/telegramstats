@@ -347,20 +347,6 @@ export default {
     filteredMessages() {
       return this.messages.filter(this.filters());
     },
-    responseTimeMedianChartData(id) {
-      const getValue = (messages) => {
-        if (messages.length === 0) return 0;
-        const res = getMedianOfDelay(messages, id);
-        return res;
-      };
-      const filterRes = (distribution) => {
-        const LIMIT = 10 * median(distribution.map(e => e.value));
-        return distribution.filter(e => e.value < LIMIT);
-      };
-      return this.getValueDistributionAroundDate({
-        getValue, range: this.clusterRange, step: this.clusterStep, filterRes, title: 'Медиана времени моего отклика',
-      });
-    },
     happySmileCountDistributionChartData() {
       return this.getWordCountDistribution(')');
     },
@@ -416,6 +402,20 @@ export default {
     },
   },
   methods: {
+    responseTimeMedianChartData(id) {
+      const getValue = (messages) => {
+        if (messages.length === 0) return 0;
+        const res = getMedianOfDelay(messages, id);
+        return res;
+      };
+      const filterRes = (distribution) => {
+        const LIMIT = 10 * median(distribution.map(e => e.value));
+        return distribution.filter(e => e.value < LIMIT);
+      };
+      return this.getValueDistributionAroundDate({
+        getValue, range: this.clusterRange, step: this.clusterStep, filterRes, title: 'Медиана времени отклика',
+      });
+    },
     getWordCountDistribution(word) {
       const reduceToWordCount = (count, m) => m.textValue.split(word).length - 1 + count;
       const getValue = messages => messages.reduce(reduceToWordCount, 0);
